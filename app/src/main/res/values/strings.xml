@@ -11,4 +11,5 @@
     <string name="btnSearch">Search</string>
     <string name="btnCreateQuiz">Create quiz</string>
     <string name="txtQuizName">Quiz name</string>
+    <string name="btnAdd">Add</string>
 </resources>
