@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QuizAppProject</string>
+    <string name="app_name">LEARN IT</string>
     <string name="edtUsername">Username</string>
     <string name="edtPassword">Password</string>
     <string name="btnLogin">Login</string>
