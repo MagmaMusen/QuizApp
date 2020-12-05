@@ -13,11 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.slider.Slider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +24,11 @@ import SMAP.assignment.QuizAppProject.Database.Repository;
 import SMAP.assignment.QuizAppProject.Database.User;
 
 public class SignInActivity extends AppCompatActivity {
-    Button btn_signIn, btn_add, btn_load;
-    Button btn_rate;
+    //Button btn_signIn, btn_add, btn_load;
+    //Button btn_rate;
+    private Button btnLogin;
+    private EditText edtUsername
+
     EditText edt_displayName;
     FirebaseAuth auth;
     Repository repository;
@@ -40,7 +39,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         setUpUI();
         if (auth.getCurrentUser() != null) {
             gotoActivity(auth.getCurrentUser().getUid());
@@ -60,7 +59,16 @@ public class SignInActivity extends AppCompatActivity {
         {
             auth = FirebaseAuth.getInstance();
         }
+        btnLogin = findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
+            }
+        });
+        /*
         edt_displayName = findViewById(R.id.edt_displayName);
+
         btn_add = findViewById(R.id.btn_add);
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +98,7 @@ public class SignInActivity extends AppCompatActivity {
                 username = edt_displayName.getText().toString();
                 signIn();
             }
-        });
+        });*/
     }
     private boolean signIn() {
 

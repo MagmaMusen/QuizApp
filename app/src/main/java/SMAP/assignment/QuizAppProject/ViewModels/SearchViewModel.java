@@ -7,12 +7,18 @@ import androidx.lifecycle.ViewModel;
 import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Database.Quiz;
+import SMAP.assignment.QuizAppProject.Database.Repository;
 
 public class SearchViewModel extends ViewModel {
 
     private MutableLiveData<List<Quiz>> quizzes;
+    private Repository repository;
     private MutableLiveData<List<Quiz>> searchQuizzes;
 
+    public SearchViewModel()
+    {
+        repository = Repository.getInstance();
+    }
     public LiveData<List<Quiz>> getQuizzes(){
         if(quizzes == null){
             quizzes = new MutableLiveData<List<Quiz>>();
@@ -21,7 +27,7 @@ public class SearchViewModel extends ViewModel {
     }
 
     public LiveData<List<Quiz>> searchQuiz(String quizName){
-        //Call something backend to get quizzes with name
+        searchQuizzes.setValue(repository.searchQuizByName(quizName));
         return searchQuizzes;
     }
 

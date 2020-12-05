@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.ListViewModel;
 import SMAP.assignment.QuizAppProject.Views.Adapters.ListAdapter;
@@ -78,15 +79,15 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
 
     //TODO: skal rettes til så den passer til det View Magnus har lavet
     public void GoToCreate(){
-        Intent i = new Intent(this, QuestionActivity.class);
-        startActivityForResult(i, 102);
+        //Intent i = new Intent(this, QuestionActivity.class);
+        //startActivityForResult(i, 102);
     }
 
     @Override
     public void onListClicked(int index) {
         //TODO: skal også rettes til så den passer
-        Intent i = new Intent(this, SingleQuizActivity.class);
-        i.putExtra("QuizData", vm.getQuiz().getValue().get(index).getId());
-        startActivityForResult(i, 103);
+        //Intent i = new Intent(this, SingleQuizActivity.class);
+        //i.putExtra("QuizData", vm.getQuiz().getValue().get(index).getId());
+        //startActivityForResult(i, 103);
     }
 }

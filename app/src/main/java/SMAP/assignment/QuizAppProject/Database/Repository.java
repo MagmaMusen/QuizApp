@@ -200,27 +200,27 @@ public class Repository{
     }
     public List<Quiz> searchQuizByName(String searchName)
     {
-        List<Quiz> quizzes
+        final List<Quiz> newQuizzes = new ArrayList<>();
         db.collection("quiz").whereEqualTo("name", searchName)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if(value != null && !value.isEmpty())
                         {
-                            List<Quiz> newQuizes = new ArrayList<>();
                             for(DocumentSnapshot doc : value.getDocuments())
                             {
                                 Quiz quiz = doc.toObject(Quiz.class);
                                 if(quiz != null)
                                 {
                                     quiz.setEntityKey(doc.getId());
-                                    newQuizes.add(quiz);
+                                    newQuizzes.add(quiz);
                                 }
                             }
-                            quizzes.setValue(newQuizes);
+
                         }
                     }
                 });
+        return newQuizzes;
     }
     private void loadQuizData() //todo only load shared quizzes
     {

@@ -51,7 +51,7 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
             }
         });
         //Søg i database - TODO: Korrekt måde at søge på?
-        vm.searchQuiz(edtSearch.toString());
+        vm.searchQuiz(edtSearch.getText().toString());
 
 
         //setup RecyclerView
