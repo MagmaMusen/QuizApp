@@ -4,16 +4,12 @@ import android.text.method.TextKeyListener;
 
 import com.google.firebase.firestore.Exclude;
 
-public class Question implements IEntity<String>{
+public class Question implements IEntity{
     private String answer;
     private String question;
     private int image;
-    @Exclude
-    @Override
-    public String getEntityKey()
-    {
-        return "question";
-    }
+
+
     public Question() {
 
     }
@@ -46,5 +42,16 @@ public class Question implements IEntity<String>{
 
     public void setImage(int image) {
         this.image = image;
+    }
+
+    @Exclude
+    @Override
+    public String getEntityKey() {
+        return null;
+    }
+    @Exclude
+    @Override
+    public String getCollectionName() {
+        return "question";
     }
 }

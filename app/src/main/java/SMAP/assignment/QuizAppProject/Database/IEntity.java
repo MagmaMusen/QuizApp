@@ -2,7 +2,9 @@ package SMAP.assignment.QuizAppProject.Database;
 
 import com.google.firebase.firestore.Exclude;
 
-public interface IEntity<TKey> {
+public interface IEntity {
     @Exclude
-    TKey getEntityKey();
+    String getEntityKey();
+    @Exclude
+    String getCollectionName();
 }
