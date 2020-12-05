@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.w3c.dom.Text;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Model.Quiz;
 import SMAP.assignment.QuizAppProject.R;
@@ -26,13 +26,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     private ISearchItemClickedListener listener;
 
     //Data in adapter
-    private ArrayList<Quiz> quizList;
+    private List<Quiz> quizList;
 
     public SearchAdapter(ISearchItemClickedListener listener){
         this.listener = listener;
     }
 
-    public void updateQuizList(ArrayList<Quiz> lists){
+    public void updateQuizList(List<Quiz> lists){
         quizList = lists;
         notifyDataSetChanged();
     }

@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Model.Quiz;
 import SMAP.assignment.QuizAppProject.R;
@@ -22,7 +22,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     private IListItemClickedListener listener;
 
     //Data in adapter
-    private ArrayList<Quiz> quizList;
+    private List<Quiz> quizList;
 
     //Constructor
     public ListAdapter(IListItemClickedListener listener){
@@ -30,7 +30,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     }
 
     //method for updating the quiz list
-    public void updateQuizList(ArrayList<Quiz> lists){
+    public void updateQuizList(List<Quiz> lists){
         quizList = lists;
         notifyDataSetChanged();
     }
