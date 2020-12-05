@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">QuizAppProject</string>
-    <string name="title_activity_signed_in">signedIn</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="edtUsername">Username</string>
+    <string name="edtPassword">Password</string>
+    <string name="btnLogin">Login</string>
+    <string name="btnSignUp">Sign up</string>
+    <string name="txtCreateUser">Create user</string>
+    <string name="txtUsernameCreate">Username:</string>
+    <string name="txtPasswordRepeat">Repeat password </string>
+    <string name="btnBack">Back</string>
+    <string name="btnSearch">Search</string>
+    <string name="btnCreateQuiz">Create quiz</string>
+    <string name="txtQuizName">Quiz name</string>
+    <string name="btnAdd">Add</string>
 </resources>
