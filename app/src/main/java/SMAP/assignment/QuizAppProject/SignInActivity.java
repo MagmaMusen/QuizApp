@@ -109,7 +109,7 @@ public class SignInActivity extends AppCompatActivity {
     }
     public void rate()
     {
-
+        
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
