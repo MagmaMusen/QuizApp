@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 
+import SMAP.assignment.QuizAppProject.Data.Repository;
 import SMAP.assignment.QuizAppProject.Models.Question;
 import SMAP.assignment.QuizAppProject.Models.TextImageToTextQuestion;
 
@@ -19,13 +20,19 @@ public class QuestionsViewModel extends AndroidViewModel {
     private String TAG = "QuestionViewModel";
     private MutableLiveData<List<Question>> questions;
 
+    private Repository repo;
+
 
     public QuestionsViewModel(@NonNull Application application) {
         super(application);
+
+        repo = Repository.getRepository(application);
     }
 
 
-    public LiveData<List<Question>> getQuestions(){
+    public LiveData<List<Question>> getQuestions(String quizId){
+
+        //repo.getQuestion for quizId
         // Dummy get.
         Log.d(TAG, "getQuestions called!");
         if(questions == null)

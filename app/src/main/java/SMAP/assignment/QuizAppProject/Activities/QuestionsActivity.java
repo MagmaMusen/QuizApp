@@ -7,12 +7,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import java.util.List;
 
+import SMAP.assignment.QuizAppProject.Constants;
 import SMAP.assignment.QuizAppProject.Models.Question;
+import SMAP.assignment.QuizAppProject.Models.Quiz;
 import SMAP.assignment.QuizAppProject.QuestionAdapter;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.QuestionsViewModel;
@@ -25,19 +28,26 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
 
     private QuestionAdapter adapter;
 
+    private String quizId;
+    private LiveData<List<Question>> questions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questions);
 
-
-
         vm = new ViewModelProvider(this).get(QuestionsViewModel.class);
-        LiveData<List<Question>> res = vm.getQuestions();
+
+        Intent intent = getIntent();
+        quizId = intent.getStringExtra(Constants.QUIZID);
+        questions = vm.getQuestions(quizId);
 
         setupUI();
 
-        vm.getQuestions().observe(this, new Observer<List<Question>>() {
+        // SEBALLE: Skal questions komme tilbage som livedata<list>
+        // eller kan vi observe på en almindelig list inde i quiz.
+
+        vm.getQuestions(quizId).observe(this, new Observer<List<Question>>() {
             @Override
             public void onChanged(List<Question> questions) {
                 Log.d(TAG, "OnChanged in observe called!");

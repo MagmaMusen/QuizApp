@@ -28,7 +28,7 @@
         app:layout_constraintTop_toBottomOf="@+id/btnPlaySingleQuiz" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txtSingleQuizTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -48,4 +48,14 @@
         android:text="@string/btnEditSingleQuiz"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/txtSingleQuizOwner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSingleQuizTitle" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

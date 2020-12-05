@@ -2,6 +2,9 @@
     <string name="app_name">QuizAppProject</string>
     <string name="btnPlay">Play</string>
     <string name="btnShare">Share</string>
+    <string name="btnMakePrivate">Make Private</string>
+    <string name="btnFollow">Follow</string>
+    <string name="btnUnfollow">Unfollow</string>
     <string name="txtTitleSingleQuizView">Quiz Title</string>
     <string name="btnEditSingleQuiz">Edit</string>
     <string name="txtQuestionThumbnailMissing">No question thumbnail text</string>
@@ -20,4 +23,5 @@
     <string name="btnPlaySkip">Skip</string>
     <string name="btnPlayLess">Less</string>
     <string name="btnPlayMore">More</string>
+    <string name="txtSingleQuizOwnerPrefix">By</string>
 </resources>

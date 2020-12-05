@@ -1,8 +1,10 @@
-package SMAP.assignment.QuizAppProject;
+package SMAP.assignment.QuizAppProject.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import SMAP.assignment.QuizAppProject.R;
 
 public class EditQuestionActivity extends AppCompatActivity {
 
