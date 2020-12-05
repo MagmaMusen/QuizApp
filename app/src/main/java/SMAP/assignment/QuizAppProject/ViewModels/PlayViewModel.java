@@ -15,20 +15,16 @@ import SMAP.assignment.QuizAppProject.Data.Repository;
 import SMAP.assignment.QuizAppProject.Models.Question;
 import SMAP.assignment.QuizAppProject.Models.TextImageToTextQuestion;
 
-public class QuestionsViewModel extends AndroidViewModel {
-
-    private String TAG = "QuestionViewModel";
+public class PlayViewModel  extends AndroidViewModel {
+    Repository repo;
+    private String TAG = "PlayViewModel";
     private MutableLiveData<List<Question>> questions;
 
-    private Repository repo;
-
-
-    public QuestionsViewModel(@NonNull Application application) {
+    public PlayViewModel(@NonNull Application application) {
         super(application);
 
         repo = Repository.getRepository(application);
     }
-
 
     public LiveData<List<Question>> getQuestions(String quizId){
         //repo.getQuestion for quizId
@@ -47,5 +43,8 @@ public class QuestionsViewModel extends AndroidViewModel {
         return questions;
     }
 
+    public void wrongAnswer(String questionId){
+
+    }
 
 }
