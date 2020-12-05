@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
-import SMAP.assignment.QuizAppProject.Model.Quiz;
-
 public class ListViewModel extends ViewModel {
 
     MutableLiveData<List<Quiz>> quizzes;

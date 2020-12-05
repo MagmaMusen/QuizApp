@@ -12,10 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import SMAP.assignment.QuizAppProject.Model.Quiz;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.ListViewModel;
 import SMAP.assignment.QuizAppProject.Views.Adapters.ListAdapter;

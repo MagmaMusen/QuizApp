@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import java.util.List;
 
-import SMAP.assignment.QuizAppProject.Model.Quiz;
+import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.SearchViewModel;
 import SMAP.assignment.QuizAppProject.Views.Adapters.SearchAdapter;
@@ -65,9 +65,9 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
 
     public void addQuiz(Quiz quizClicked){
         //TODO: tilpas så den passer
-        Intent i = new Intent(this, SingleQuizActivity.class);
+        //Intent i = new Intent(this, SingleQuizActivity.class);
         //Skal måske ikke være 101, siden det er den er i ListActivity
-        startActivityForResult(i, 101);
+        //startActivityForResult(i, 101);
     }
 
     @Override

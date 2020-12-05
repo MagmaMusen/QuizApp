@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import SMAP.assignment.QuizAppProject.Model.Quiz;
+import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.R;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {

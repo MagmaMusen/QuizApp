@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
-import SMAP.assignment.QuizAppProject.Model.Quiz;
+import SMAP.assignment.QuizAppProject.Database.Quiz;
 
 public class SearchViewModel extends ViewModel {
 
