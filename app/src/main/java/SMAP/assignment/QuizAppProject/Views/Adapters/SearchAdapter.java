@@ -52,6 +52,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
     @Override
     public int getItemCount() {
+        if(quizList == null)
+        {
+            return 0;
+        }
         return quizList.size();
     }
 
@@ -66,7 +70,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         public SearchViewHolder(@NonNull View itemView, final ISearchItemClickedListener searchItemClickedListener){
             super(itemView);
 
-            txtQuizName = itemView.findViewById(R.id.txtQuizName);
+            txtQuizName = itemView.findViewById(R.id.txtQuizSearchName);
             btnAdd = itemView.findViewById(R.id.btnQuizSearchAdd);
             listener = searchItemClickedListener;
 

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -22,17 +23,13 @@ import java.util.List;
 import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.Database.Repository;
 import SMAP.assignment.QuizAppProject.Database.User;
+import SMAP.assignment.QuizAppProject.Views.ListActivity;
 
 public class SignInActivity extends AppCompatActivity {
-    //Button btn_signIn, btn_add, btn_load;
-    //Button btn_rate;
     private Button btnLogin;
-    private EditText edtUsername
-
-    EditText edt_displayName;
+    private EditText edtUsername;
     FirebaseAuth auth;
     Repository repository;
-    Boolean newData = false;
     String username;
     private static final String TAG = "SignInActivity";
     public static final int REQUEST_LOGIN = 1010;
@@ -42,15 +39,8 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setUpUI();
         if (auth.getCurrentUser() != null) {
-            gotoActivity(auth.getCurrentUser().getUid());
+            gotoActivity();
         }
-        repository.getQuizzes().observe(this, new Observer<List<Quiz>>() {
-            @Override
-            public void onChanged(List<Quiz> quizzes) {
-                newData = true;
-            }
-        });
-
     }
     private void setUpUI()
     {
@@ -59,50 +49,16 @@ public class SignInActivity extends AppCompatActivity {
         {
             auth = FirebaseAuth.getInstance();
         }
-        btnLogin = findViewById(R.id.btnLogin);
+        edtUsername = findViewById(R.id.edtUsername);
+        btnLogin = findViewById(R.id.btnSignUp);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn();
             }
         });
-        /*
-        edt_displayName = findViewById(R.id.edt_displayName);
-
-        btn_add = findViewById(R.id.btn_add);
-        btn_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                add();
-            }
-        });
-        btn_load = findViewById(R.id.btn_load);
-        btn_load.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                load();
-            }
-        });
-        btn_rate = findViewById(R.id.btn_rating);
-        btn_rate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rate();
-            }
-        });
-
-        btn_signIn = findViewById(R.id.btn_signIn);
-        btn_signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                username = edt_displayName.getText().toString();
-                signIn();
-            }
-        });*/
     }
     private boolean signIn() {
-
-        //add here if we want more login options
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build()
@@ -115,10 +71,6 @@ public class SignInActivity extends AppCompatActivity {
         );
         return true;
     }
-    public void rate()
-    {
-        
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -128,33 +80,23 @@ public class SignInActivity extends AppCompatActivity {
             {
                 String uid = auth.getCurrentUser().getUid();
                 repository.createUser(new User(uid, null, username));
-                gotoActivity(uid);
-            }
-
-        }
-    }
-    private void add()
-    {
-        repository.createQuiz(new Quiz("Test quiz", auth.getCurrentUser().getUid(), false));
-
-    }
-    private void load()
-    {
-        List<Quiz> quizzes = new ArrayList<>(repository.getQuizzes().getValue());
-        if(quizzes != null)
-        {
-            for(Quiz q : quizzes)
-            {
-                if(!q.getShared())
-                {
-                    Log.d(TAG, "load: something went wrong");
-                }
+                gotoActivity();
             }
         }
     }
-    private void gotoActivity(String uid)
+    private void gotoActivity()
     {
-        Toast.makeText(this, "signed in", Toast.LENGTH_SHORT).show();
-        repository.createUser(new User(auth.getCurrentUser().getUid(), null, edt_displayName.getText().toString()));
+        repository.getCurrentUser().addOnSuccessListener(new OnSuccessListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                foundUser();
+            }
+        });
+
+    }
+    private void foundUser()
+    {
+        Intent i = new Intent(this, ListActivity.class);
+        startActivity(i);
     }
 }

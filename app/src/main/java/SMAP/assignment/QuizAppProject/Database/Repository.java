@@ -22,6 +22,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import org.w3c.dom.Document;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,15 +51,26 @@ public class Repository{
     {
         this.user = user;
     }
-    private User getCurrentUser()
+    public Task<User> getCurrentUser()
     {
-        return user;
+        DocumentReference documentReference = db.collection("user").document(auth.getCurrentUser().getUid());
+        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, User>() {
+            @Override
+            public User then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot.exists()) {
+                    return documentSnapshot.toObject(User.class);
+                } else {
+                    return User.class.newInstance();
+                }
+            }
+        }).addOnSuccessListener(new OnSuccessListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                setCurrentUser(user);
+            }
+        });
     }
-    private void getMyQuizzes()
-    {
-
-    }
-    private MutableLiveData<List<Quiz>> quizzes;
     private static final String TAG = "Repository";
     public void createUser(final User user)
     {
@@ -96,23 +109,29 @@ public class Repository{
         questionData.setValue(questions);
         return questionData;
     }
-    public LiveData<List<Quiz>> getQuizzes()
+    public Task<QuerySnapshot> loadSubscribed()
     {
-        if(quizzes == null)
-        {
-            quizzes = new MutableLiveData<>();
-            loadQuizData();
-        }
-        return quizzes;
+        return db.collection("quiz").whereIn(FieldPath.documentId(), user.getSubscribedQuizzes())
+                .get();
     }
-    public void createQuiz(final Quiz quiz)
+    private MutableLiveData<List<Quiz>> quizzes;
+    public Task<QuerySnapshot> getAllQuizzes()
     {
-        db.collection("quiz").add(quiz).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        return db.collection("quiz").whereEqualTo("shared", true).get();
+    }
+
+    public String createQuiz(final Quiz quiz)
+    {
+        //TODO: check if works
+        String quizId = db.collection("quiz").add(quiz).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                getCurrentUser().addSubscribedQuiz(documentReference.getId());
+
             }
-        });
+        }).getResult().getId();
+        user.addSubscribedQuiz(quizId);
+        update(user);
+        return quizId;
     }
     public void createQuestion(Question question, final Quiz quiz) {
         CollectionReference cf = db.collection("question");
@@ -162,11 +181,6 @@ public class Repository{
             }
         });
     }
-    public void setRating(Quiz quiz, int rating)
-    {
-        quiz.setRating(rating);
-        update(quiz);
-    }
     public List<Quiz> getMostPopularQuizzes()
     {
         final List<Quiz> quizzes = new ArrayList<>();
@@ -198,53 +212,18 @@ public class Repository{
             }
         });
     }
-    public List<Quiz> searchQuizByName(String searchName)
-    {
-        final List<Quiz> newQuizzes = new ArrayList<>();
-        db.collection("quiz").whereEqualTo("name", searchName)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(value != null && !value.isEmpty())
-                        {
-                            for(DocumentSnapshot doc : value.getDocuments())
-                            {
-                                Quiz quiz = doc.toObject(Quiz.class);
-                                if(quiz != null)
-                                {
-                                    quiz.setEntityKey(doc.getId());
-                                    newQuizzes.add(quiz);
-                                }
-                            }
 
-                        }
-                    }
-                });
-        return newQuizzes;
-    }
-    private void loadQuizData() //todo only load shared quizzes
+    public void addQuiz(String quizId)
     {
-        db.collection("quiz").whereEqualTo("shared", true)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(value != null && !value.isEmpty())
-                        {
-                            List<Quiz> newQuizes = new ArrayList<>();
-                            for(DocumentSnapshot doc : value.getDocuments())
-                            {
-                                Quiz quiz = doc.toObject(Quiz.class);
-                                if(quiz != null)
-                                {
-                                    quiz.setEntityKey(doc.getId());
-                                    newQuizes.add(quiz);
-                                }
-                            }
-                            quizzes.setValue(newQuizes);
-                        }
-                    }
-                });
-        getMyQuizzes();
+        if(user.getSubscribedQuizzes() != null)
+        {
+            if(user.getSubscribedQuizzes().contains(quizId))
+            {
+                return;
+            }
+        }
+        user.addSubscribedQuiz(quizId);
+        update(user);
     }
     private Repository()
     {

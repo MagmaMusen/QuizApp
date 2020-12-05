@@ -2,6 +2,7 @@ package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,12 +17,13 @@ import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.R;
+import SMAP.assignment.QuizAppProject.ViewModels.ListViewModel;
 import SMAP.assignment.QuizAppProject.ViewModels.SearchViewModel;
 import SMAP.assignment.QuizAppProject.Views.Adapters.SearchAdapter;
 
 public class SearchActivity extends AppCompatActivity implements SearchAdapter.ISearchItemClickedListener {
 
-    private Button btnBack;
+    private Button btnBack, btnSearchConfirm;
     private EditText edtSearch;
 
     private RecyclerView rcvSearch;
@@ -34,7 +36,26 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        vm = new ViewModelProvider(this).get(SearchViewModel.class);
+        setUpUI();
+        vm.getQuizzes().observe(this, new Observer<List<Quiz>>() {
+            @Override
+            public void onChanged(List<Quiz> quizzes) {
+                searchAdapter.updateQuizList(quizzes);
+            }
+        });
+    }
+    private void setUpUI()
+    {
+
         edtSearch = findViewById(R.id.edtSearch);
+        btnSearchConfirm = findViewById(R.id.btnSearchConfirm);
+        btnSearchConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vm.searchQuiz(edtSearch.getText().toString());
+            }
+        });
         btnBack = findViewById(R.id.btnBackSearch);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,36 +63,24 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
                 finish();
             }
         });
-
-        vm = new ViewModelProvider(this).get(SearchViewModel.class);
-        vm.getQuizzes().observe(this, new Observer<List<Quiz>>() {
-            @Override
-            public void onChanged(List<Quiz> quizzes) {
-                searchAdapter.updateQuizList(quizzes);
-            }
-        });
-        //Søg i database - TODO: Korrekt måde at søge på?
-        vm.searchQuiz(edtSearch.getText().toString());
-
-
         //setup RecyclerView
         searchAdapter = new SearchAdapter(this);
         rcvSearch = findViewById(R.id.rcvSearchQuizzes);
         rcvSearch.setLayoutManager(new LinearLayoutManager(this));
         rcvSearch.setAdapter(searchAdapter);
-
     }
 
-
-    public void addQuiz(Quiz quizClicked){
-        //TODO: tilpas så den passer
-        //Intent i = new Intent(this, SingleQuizActivity.class);
-        //Skal måske ikke være 101, siden det er den er i ListActivity
-        //startActivityForResult(i, 101);
+    public void addQuiz(Quiz quiz){
+        vm.addQuiz(quiz);
     }
 
     @Override
     public void onSearchClicked(int index) {
-        //Do nothing when clicked on?
+        /*
+        Intent i = new Intent(this, SingleQuizActivity.class);
+        String quizId = vm.getQuizId(index);
+        i.putExtra("QUIZ_ID", quizId);
+
+         */
     }
 }

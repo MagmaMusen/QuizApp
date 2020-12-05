@@ -15,7 +15,7 @@ import SMAP.assignment.QuizAppProject.R;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
-    public interface IListItemClickedListener{
+    public interface IListItemClickedListener {
         void onListClicked(int index);
     }
 
@@ -25,12 +25,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     private List<Quiz> quizList;
 
     //Constructor
-    public ListAdapter(IListItemClickedListener listener){
+    public ListAdapter(IListItemClickedListener listener) {
         this.listener = listener;
     }
 
     //method for updating the quiz list
-    public void updateQuizList(List<Quiz> lists){
+    public void updateQuizList(List<Quiz> lists) {
         quizList = lists;
         notifyDataSetChanged();
     }
@@ -53,17 +53,20 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     @Override
     public int getItemCount() {
+        if (quizList == null) {
+            return 0;
+        }
         return quizList.size();
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         //Viewhodler UI widget references
         TextView txtQuizName;
 
         ListAdapter.IListItemClickedListener listener;
 
-            public ListViewHolder(@NonNull View itemView, ListAdapter.IListItemClickedListener listItemClickedListener){
+        public ListViewHolder(@NonNull View itemView, ListAdapter.IListItemClickedListener listItemClickedListener) {
             super(itemView);
 
             txtQuizName = itemView.findViewById(R.id.txtQuizName);

@@ -12,9 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Database.Quiz;
+import SMAP.assignment.QuizAppProject.Database.User;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.ListViewModel;
 import SMAP.assignment.QuizAppProject.Views.Adapters.ListAdapter;
@@ -29,65 +32,85 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
 
     private ListViewModel vm;
 
+    private String username = "default";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-    btnSearch = findViewById(R.id.btnSearch);
-    btnSearch.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            GoToSearch();
-        }
-    });
+        vm = new ViewModelProvider(this).get(ListViewModel.class);
+        setUpUI();
+        vm.getQuizzes().observe(this, new Observer<List<Quiz>>() {
+            @Override
+            public void onChanged(List<Quiz> quizzes) {
+                listAdapter.updateQuizList(quizzes);
+            }
+        });
 
-    btnCreate = findViewById(R.id.btnCreateQuiz);
-    btnCreate.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            GoToCreate();
-        }
-    });
+    }
+    private void setUpUI()
+    {
+        btnSearch = findViewById(R.id.btnSearch);
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoToSearch();
+            }
+        });
 
-    txtLoggedInUser = findViewById(R.id.txtLoggedInUser);
+        btnCreate = findViewById(R.id.btnCreateQuiz);
+        btnCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoToCreate();
+            }
+        });
 
+        txtLoggedInUser = findViewById(R.id.txtLoggedInUser);
 
-    vm = new ViewModelProvider(this).get(ListViewModel.class);
-    vm.getQuizzes().observe(this, new Observer<List<Quiz>>() {
-        @Override
-        public void onChanged(List<Quiz> quizzes) {
-            listAdapter.updateQuizList(quizzes);
-        }
-    });
-
-
-    //setup recyclerview
+        vm.getCurrentUserName().addOnSuccessListener(new OnSuccessListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                txtLoggedInUser.setText(user.getDisplayName());
+            }
+        });
         listAdapter = new ListAdapter(this);
         rcvQuizzes = findViewById(R.id.rcvQuizzes);
         rcvQuizzes.setLayoutManager(new LinearLayoutManager(this));
         rcvQuizzes.setAdapter(listAdapter);
+    }
 
-    //TODO: Update rcv here
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        vm.updateSubscriberList();
     }
 
     public void GoToSearch(){
+
         Intent i = new Intent(this, SearchActivity.class);
-        startActivityForResult(i,101);
+        startActivity(i);
     }
 
     //TODO: skal rettes til så den passer til det View Magnus har lavet
     public void GoToCreate(){
-        //Intent i = new Intent(this, QuestionActivity.class);
-        //startActivityForResult(i, 102);
+        String quizId = vm.createQuiz();
+        /*
+        Intent i = new Intent(this, QuestionActivity.class);
+        i.putExtra("QUIZ_ID", quizId);
+        startActivity(i);
+        */
     }
 
+    //TODO: skal opdateres med magnus
     @Override
     public void onListClicked(int index) {
-        //TODO: skal også rettes til så den passer
-        //Intent i = new Intent(this, SingleQuizActivity.class);
-        //i.putExtra("QuizData", vm.getQuiz().getValue().get(index).getId());
-        //startActivityForResult(i, 103);
+        /*
+        Intent i = new Intent(this, SingleQuizActivity.class);
+        i.putExtra("QUIZ_ID", vm.getQuizId(index));
+        startActivity(i);
+
+         */
     }
 }
