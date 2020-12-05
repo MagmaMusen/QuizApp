@@ -50,6 +50,8 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
                 searchAdapter.updateQuizList(quizzes);
             }
         });
+        //Søg i database - TODO: Korrekt måde at søge på?
+        vm.searchQuiz(edtSearch.toString());
 
 
         //setup RecyclerView
@@ -58,14 +60,11 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
         rcvSearch.setLayoutManager(new LinearLayoutManager(this));
         rcvSearch.setAdapter(searchAdapter);
 
-
-        //TODO: Update rcv here
     }
 
 
     public void addQuiz(Quiz quizClicked){
-        //Go to Single Quiz View
-        //TODO: tilpas
+        //TODO: tilpas så den passer
         Intent i = new Intent(this, SingleQuizActivity.class);
         //Skal måske ikke være 101, siden det er den er i ListActivity
         startActivityForResult(i, 101);
