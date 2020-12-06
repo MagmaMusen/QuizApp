@@ -12,19 +12,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Views.SingleQuizActivity"></activity>
-        <activity android:name=".Views.PlayActivity"></activity>
-        <activity android:name=".Views.EditQuestionActivity" />
-        <activity android:name=".Views.QuestionsActivity" />
-        <activity android:name=".Views.SignInActivity">
+        <activity
+            android:name=".Views.SingleQuizActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Views.PlayActivity"
+            android:screenOrientation="portrait"
+            ></activity>
+        <activity
+            android:name=".Views.EditQuestionActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".Views.QuestionsActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Views.SignInActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Views.ListActivity"></activity>
-        <activity android:name=".Views.SearchActivity"></activity>
+        <activity android:name=".Views.ListActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".Views.SearchActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
