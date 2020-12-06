@@ -5,16 +5,29 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import SMAP.assignment.QuizAppProject.Data.Repository;
+import SMAP.assignment.QuizAppProject.Database.Question;
+import SMAP.assignment.QuizAppProject.Database.Repository;
+
 
 public class EditQuestionViewModel extends AndroidViewModel {
-    Repository repo;
+    Repository repository;
 
     public EditQuestionViewModel(@NonNull Application application) {
         super(application);
 
-        repo = Repository.getRepository(application);
+        repository = Repository.getInstance();
     }
 
-
+    public void deleteQuestion(Question question)
+    {
+        repository.delete(question);
+    }
+    public void updateQuestion(Question question)
+    {
+        repository.update(question);
+    }
+    public Question getCurrentQuestion()
+    {
+        return repository.getCurrentQuestion();
+    }
 }

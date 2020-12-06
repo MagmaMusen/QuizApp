@@ -1,4 +1,4 @@
-package SMAP.assignment.QuizAppProject.Activities;
+package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -14,9 +14,8 @@ import android.util.Log;
 import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Constants;
-import SMAP.assignment.QuizAppProject.Models.Question;
-import SMAP.assignment.QuizAppProject.Models.Quiz;
-import SMAP.assignment.QuizAppProject.QuestionAdapter;
+import SMAP.assignment.QuizAppProject.Database.Question;
+import SMAP.assignment.QuizAppProject.Views.Adapters.QuestionAdapter;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.QuestionsViewModel;
 
@@ -28,9 +27,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
 
     private QuestionAdapter adapter;
 
-    private String quizId;
-    private LiveData<List<Question>> questions;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,24 +34,22 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
 
         vm = new ViewModelProvider(this).get(QuestionsViewModel.class);
 
-        Intent intent = getIntent();
-        quizId = intent.getStringExtra(Constants.QUIZID);
-        questions = vm.getQuestions(quizId);
-
         setupUI();
 
-        // SEBALLE: Skal questions komme tilbage som livedata<list>
-        // eller kan vi observe på en almindelig list inde i quiz.
-
-        vm.getQuestions(quizId).observe(this, new Observer<List<Question>>() {
+        vm.getQuestions().observe(this, new Observer<List<Question>>() {
             @Override
             public void onChanged(List<Question> questions) {
-                Log.d(TAG, "OnChanged in observe called!");
                 adapter.updateQuestionList(questions);
             }
         });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        vm.loadQuestions();
     }
 
     private void setupUI(){
@@ -71,7 +65,9 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
 
 
     @Override
-    public void onQuestionClicked(int index) {
-        Log.d(TAG,"Click!");
+    public void onQuestionClicked(Question question) {
+        vm.setCurrentQuestion(question);
+        Intent i = new Intent(this, EditQuestionActivity.class);
+        startActivity(i);
     }
 }

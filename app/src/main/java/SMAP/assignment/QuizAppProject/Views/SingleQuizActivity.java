@@ -1,4 +1,4 @@
-package SMAP.assignment.QuizAppProject.Activities;
+package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -11,8 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import SMAP.assignment.QuizAppProject.Constants;
-import SMAP.assignment.QuizAppProject.Models.Quiz;
+import SMAP.assignment.QuizAppProject.Database.Quiz;
+import SMAP.assignment.QuizAppProject.Database.User;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.SingleQuizViewModel;
 
@@ -22,12 +26,8 @@ public class SingleQuizActivity extends AppCompatActivity {
     private TextView txtTitle, txtQuizOwner;
     private Button btnEdit, btnPlay, btnShareAdd;
     private SingleQuizViewModel vm;
-    private String quizId;
-    private String userId;
-    private LiveData<Quiz> quiz;
+    private Quiz quiz;
     private Boolean isOwner = false;
-    private Boolean isShared = false;
-    private Boolean isFollowed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,49 +37,35 @@ public class SingleQuizActivity extends AppCompatActivity {
         // Set view model.
         vm = new ViewModelProvider(this).get(SingleQuizViewModel.class);
 
-        // Unpack intent.
-        Intent intent = getIntent();
-        quizId = intent.getStringExtra(Constants.QUIZID);
-        quiz = vm.getQuiz(quizId);
+        quiz = vm.getSelectedQuiz();
 
         if(vm.getCurrentUserId() == null){
             Log.d(TAG, "onCreate: " + "UserId is null!");
             finish();
         }
-
-        // Get user ID.
-        userId = quiz.getValue().getUserId();
-
-        // Check if owner.
-        isOwner =((userId == vm.getCurrentUserId()) ? true : false);
-
-        if(isOwner){
-            // Check if shared.
-            isShared = ((quiz.getValue().getShared() == true) ? true : false);
-        } else {
-            // Check if followed.
-
-            // Add check!!!!!!!!!!!!
-        }
-
         setupUI();
     }
 
     private void setupUI(){
         // Quiz title setup.
         txtTitle = findViewById(R.id.txtSingleQuizTitle);
-        txtTitle.setText(quiz.getValue().getName());
+        txtTitle.setText(quiz.getName());
 
         // Quiz owner setup.
         txtQuizOwner = findViewById(R.id.txtSingleQuizOwner);
-        // THIS SHOULD USE DISPLAY NAME.
-        txtQuizOwner.setText(this.getResources().getString(R.string.txtSingleQuizOwnerPrefix) + " " + vm.getQuizOwnerDisplayName());
+        vm.getQuizOwnerDisplayName().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User owner = documentSnapshot.toObject(User.class);
+                txtQuizOwner.setText(getResource(R.string.txtSingleQuizOwnerPrefix) + " " + owner.getDisplayName());
+            }
+        });
 
         btnPlay = findViewById(R.id.btnPlaySingleQuiz);
         btnShareAdd = findViewById(R.id.btnShareAddSingleQuiz);
         btnEdit = findViewById(R.id.btnEdit);
 
-        updateShareUI();
+        toggleUi();
 
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,50 +77,33 @@ public class SingleQuizActivity extends AppCompatActivity {
         btnShareAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleShareAdd();
+                toggleUi();
             }
         });
 
     }
-
-
-
-    private void toggleShareAdd(){
-        if(isOwner) {
-            // Toggle shared.
-            if(isShared) {
-                vm.setShared(false, quizId);
-                isShared = false;
-            } else {
-                vm.setShared(true, quizId);
-                isShared = true;
-            }
-        } else {
-            if(isFollowed) {
-                vm.setFollow(false, userId, quizId);
-                isFollowed = false;
-            } else {
-                vm.setFollow(true, userId, quizId);
-                isFollowed = true;
-            }
-        }
-        updateShareUI();
+    private String getResource(int id)
+    {
+        return this.getResources().getString(id);
     }
 
-    private void updateShareUI(){
-        if(isOwner) {
-            // Quiz is owned by current user.
-            // Share button setup.
-            if(isShared) {
+
+    //function for button
+    private void toggleUi(){
+        if(quiz.getUserId() == vm.getCurrentUserId()) {
+            // Toggle shared.
+            Boolean shared = vm.toggleShared();
+            if(shared)
+            {
                 btnShareAdd.setText(this.getResources().getString(R.string.btnMakePrivate));
-            } else {
+            }
+            else
+            {
                 btnShareAdd.setText(this.getResources().getString(R.string.btnShare));
             }
         } else {
-            // Quiz is owned by another user.
-            // Follow button setup.
-
-            // HER SKAL TJEKKES FOR FOLLOWING
+            //Toggle Follow
+            Boolean isFollowed = vm.toggleFollowQuiz();
             if(isFollowed) {
                 btnShareAdd.setText(this.getResources().getString(R.string.btnUnfollow));
             } else {
@@ -143,10 +112,8 @@ public class SingleQuizActivity extends AppCompatActivity {
 
         }
     }
-
     private void gotoQuestionsActivity(){
         Intent intent = new Intent(this, QuestionsActivity.class);
-        intent.putExtra(Constants.QUIZID, quizId);
         startActivity(intent);
     }
 }

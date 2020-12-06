@@ -1,4 +1,4 @@
-package SMAP.assignment.QuizAppProject;
+package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +23,7 @@ import java.util.List;
 import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.Database.Repository;
 import SMAP.assignment.QuizAppProject.Database.User;
+import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.Views.ListActivity;
 
 public class SignInActivity extends AppCompatActivity {

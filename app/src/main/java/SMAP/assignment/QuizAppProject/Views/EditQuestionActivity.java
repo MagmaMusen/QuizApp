@@ -1,4 +1,4 @@
-package SMAP.assignment.QuizAppProject.Activities;
+package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import SMAP.assignment.QuizAppProject.Constants;
+import SMAP.assignment.QuizAppProject.Database.Question;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.EditQuestionViewModel;
 
@@ -22,6 +23,8 @@ public class EditQuestionActivity extends AppCompatActivity {
     EditQuestionViewModel vm;
     String quizId;
 
+    private Question question;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +32,7 @@ public class EditQuestionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_question);
 
         vm = new ViewModelProvider(this).get(EditQuestionViewModel.class);
-        Intent intent = getIntent();
-
-        // We need a question Id
-        quizId = intent.getStringExtra(Constants.QUIZID);
-
-
+        question = vm.getCurrentQuestion();
         setupUI();
     }
 
@@ -50,19 +48,21 @@ public class EditQuestionActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                finish();
             }
         });
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                vm.updateQuestion(question);
+                finish();
             }
         });
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                vm.deleteQuestion(question);
+                finish();
             }
         });
 

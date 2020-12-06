@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Database.Quiz;
@@ -71,16 +73,13 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
     }
 
     public void addQuiz(Quiz quiz){
-        vm.addQuiz(quiz);
+        vm.toggleFollow(quiz);
     }
 
     @Override
-    public void onSearchClicked(int index) {
-        /*
+    public void onSearchClicked(Quiz quiz) {
+        vm.setCurrentQuiz(quiz);
         Intent i = new Intent(this, SingleQuizActivity.class);
-        String quizId = vm.getQuizId(index);
-        i.putExtra("QUIZ_ID", quizId);
-
-         */
+        startActivity(i);
     }
 }

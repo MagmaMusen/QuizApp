@@ -1,4 +1,4 @@
-package SMAP.assignment.QuizAppProject.Activities;
+package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -16,10 +16,9 @@ import java.util.List;
 import java.util.Random;
 
 import SMAP.assignment.QuizAppProject.Constants;
-import SMAP.assignment.QuizAppProject.Models.Question;
+import SMAP.assignment.QuizAppProject.Database.Question;
 import SMAP.assignment.QuizAppProject.R;
 import SMAP.assignment.QuizAppProject.ViewModels.PlayViewModel;
-import SMAP.assignment.QuizAppProject.ViewModels.QuestionsViewModel;
 
 public class PlayActivity extends AppCompatActivity {
 
@@ -32,9 +31,6 @@ public class PlayActivity extends AppCompatActivity {
     private Random random = new Random();
 
 
-    // Is this even livedata?
-    private LiveData<List<Question>> questions;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +40,7 @@ public class PlayActivity extends AppCompatActivity {
 
         vm = new ViewModelProvider(this).get(PlayViewModel.class);
 
-        Intent intent = getIntent();
-        quizId = intent.getStringExtra(Constants.QUIZID);
-        questions = vm.getQuestions(quizId);
+        List<Question> questions = vm.getQuestions();
 
         // We need weights on individual questions from the user.
     }

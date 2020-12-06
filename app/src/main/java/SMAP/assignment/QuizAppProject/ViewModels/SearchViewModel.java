@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.auth.api.credentials.CredentialsOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -32,12 +33,13 @@ public class SearchViewModel extends ViewModel {
     {
         return repository.getSearch();
     }
-    public void addQuiz(Quiz quiz)
+    public Boolean toggleFollow(Quiz quiz)
     {
-        repository.addQuiz(quiz.getEntityKey());
+        return repository.toggleFollow(quiz.getEntityKey());
     }
-    public String getQuizId(int index)
+    public void setCurrentQuiz(Quiz quiz)
     {
-        return null;//quizzes.get(index).getEntityKey();
+        repository.setCurrentQuiz(quiz);
     }
+
 }

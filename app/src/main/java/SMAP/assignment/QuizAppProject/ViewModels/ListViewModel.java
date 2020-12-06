@@ -26,9 +26,9 @@ public class ListViewModel extends ViewModel {
     {
         repository = Repository.getInstance();
     }
-    public String createQuiz()
+    public void createQuiz()
     {
-        return repository.createQuiz(new Quiz("Default", auth.getCurrentUser().getUid(), false));
+        repository.createQuiz(new Quiz("Default", repository.getCurrentUser().getUid(), false));
     }
     public String getCurrentUserName()
     {
@@ -45,11 +45,8 @@ public class ListViewModel extends ViewModel {
     public LiveData<List<Quiz>> getQuizzes(){
         return repository.getSubscribed();
     }
-    /*
-    public String getQuizId(int index)
+    public void setCurrentQuiz(Quiz quiz)
     {
-        return quizzes.getValue().get(index).getEntityKey();
+        repository.setCurrentQuiz(quiz);
     }
-
-     */
 }

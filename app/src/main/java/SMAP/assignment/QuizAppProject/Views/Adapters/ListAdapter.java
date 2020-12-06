@@ -16,7 +16,7 @@ import SMAP.assignment.QuizAppProject.R;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
     public interface IListItemClickedListener {
-        void onListClicked(int index);
+        void onListClicked(Quiz quiz);
     }
 
     private IListItemClickedListener listener;
@@ -77,7 +77,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
         @Override
         public void onClick(View v) {
-            listener.onListClicked(getAdapterPosition());
+            listener.onListClicked(quizList.get(getAdapterPosition()));
         }
     }
 }

@@ -1,4 +1,4 @@
-package SMAP.assignment.QuizAppProject;
+package SMAP.assignment.QuizAppProject.Views.Adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,7 +15,8 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import SMAP.assignment.QuizAppProject.Models.Question;
+import SMAP.assignment.QuizAppProject.Database.Question;
+import SMAP.assignment.QuizAppProject.R;
 
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder>{
 
@@ -24,7 +25,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     private IQuestionItemClickedListener listener;
 
     public interface IQuestionItemClickedListener {
-        void onQuestionClicked(int index);
+        void onQuestionClicked(Question question);
     }
 
     public QuestionAdapter(IQuestionItemClickedListener listener, Context context){
@@ -34,7 +35,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
     public void updateQuestionList(List<Question> list){
         questionList = list;
-        Log.d("ey",questionList.get(0).getThumbnailImageUrl());
+        //todo some image stuff?
         notifyDataSetChanged();
     }
 
@@ -51,8 +52,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     @Override
     public void onBindViewHolder(@NonNull QuestionViewHolder holder, int position) {
         Question q = questionList.get(position);
-        if(q.getThumbnailImageUrl() != null) {
-            Glide.with(holder.imgThumbnail.getContext()).load(q.getThumbnailImageUrl()).into(holder.imgThumbnail);
+        if(q.getImage() != 0) {
+            Glide.with(holder.imgThumbnail.getContext()).load(q.getImage()).into(holder.imgThumbnail);
         }
     }
 
@@ -87,7 +88,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         // The listener interface function that returns the clicked index in the recyclerview.
         @Override
         public void onClick(View v) {
-            listener.onQuestionClicked(getAdapterPosition());
+            listener.onQuestionClicked(questionList.get(getAdapterPosition()));
         }
     }
 }

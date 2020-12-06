@@ -11,19 +11,18 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 
-import SMAP.assignment.QuizAppProject.Data.Repository;
-import SMAP.assignment.QuizAppProject.Models.Question;
-import SMAP.assignment.QuizAppProject.Models.TextImageToTextQuestion;
+import SMAP.assignment.QuizAppProject.Database.Question;
+import SMAP.assignment.QuizAppProject.Database.Repository;
 
 public class PlayViewModel  extends AndroidViewModel {
-    Repository repo;
+    Repository repository;
     private String TAG = "PlayViewModel";
     private MutableLiveData<List<Question>> questions;
 
     public PlayViewModel(@NonNull Application application) {
         super(application);
 
-        repo = Repository.getRepository(application);
+        repository = Repository.getInstance();
     }
 
     public LiveData<List<Question>> getQuestions(String quizId){
@@ -36,13 +35,16 @@ public class PlayViewModel  extends AndroidViewModel {
             questions.setValue(new ArrayList<Question>());
             for(int i = 0; i<20; i++)
             {
-                questions.getValue().add(new TextImageToTextQuestion());
+                //questions.getValue().add(new TextImageToTextQuestion());
             }
             Log.d(TAG, "Added dummy data!");
         }
         return questions;
     }
-
+    public List<Question> getQuestions()
+    {
+        return null;
+    }
     public void wrongAnswer(String questionId){
 
     }

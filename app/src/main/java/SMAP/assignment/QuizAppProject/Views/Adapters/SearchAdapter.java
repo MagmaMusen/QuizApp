@@ -17,7 +17,7 @@ import SMAP.assignment.QuizAppProject.R;
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
     public interface ISearchItemClickedListener{
-        void onSearchClicked(int index);
+        void onSearchClicked(Quiz quiz);
         void addQuiz(Quiz quiz);
     }
 
@@ -86,7 +86,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
         @Override
         public void onClick(View v) {
-            listener.onSearchClicked(getAdapterPosition());
+            listener.onSearchClicked(quizList.get(getAdapterPosition()));
         }
     }
 }

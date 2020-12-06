@@ -47,8 +47,15 @@ public class Question implements IEntity{
     @Exclude
     @Override
     public String getEntityKey() {
-        return null;
+        return id;
     }
+    @Exclude
+    public void setEntityKey(String id)
+    {
+        this.id = id;
+    }
+    @Exclude
+    String id;
     @Exclude
     @Override
     public String getCollectionName() {

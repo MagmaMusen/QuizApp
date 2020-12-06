@@ -90,22 +90,15 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
 
     //TODO: skal rettes til så den passer til det View Magnus har lavet
     public void GoToCreate(){
-        String quizId = vm.createQuiz();
-        /*
-        Intent i = new Intent(this, QuestionActivity.class);
-        i.putExtra("QUIZ_ID", quizId);
+        vm.createQuiz();
+        Intent i = new Intent(this, QuestionsActivity.class);
         startActivity(i);
-        */
     }
-
-    //TODO: skal opdateres med magnus
     @Override
-    public void onListClicked(int index) {
-        /*
-        Intent i = new Intent(this, SingleQuizActivity.class);
-        i.putExtra("QUIZ_ID", vm.getQuizId(index));
-        startActivity(i);
+    public void onListClicked(Quiz quiz) {
 
-         */
+        vm.setCurrentQuiz(quiz);
+        Intent i = new Intent(this, SingleQuizActivity.class);
+        startActivity(i);
     }
 }

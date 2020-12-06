@@ -42,11 +42,16 @@ import static com.google.android.gms.tasks.Tasks.await;
 
 
 public class Repository{
+    private static final String TAG = "Repository";
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private static Repository repository;
+    //user stuff
+    public Task<DocumentSnapshot> getUserName(String id)
+    {
+        return db.collection("user").document(id).get();
+    }
     private User user;
-
     public User getCurrentUser()
     {
         return user;
@@ -75,7 +80,6 @@ public class Repository{
             }
         });
     }
-    private static final String TAG = "Repository";
     public Task<Void> createUser(final User user)
     {
         return db.collection("user").document(auth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -102,17 +106,91 @@ public class Repository{
                     }
                 });
     }
-    public LiveData<List<Question>> getQuestions(List<String> ids)
+    //question stuff
+    private Question currentQuestion;
+    private MutableLiveData<List<Question>> questions;
+    public LiveData<List<Question>> getQuestions()
     {
-        List<Question> questions = new ArrayList<>();
-        for(String id : ids)
+        if(questions == null)
         {
-            questions.add(getQuestion(id));
+            questions = new MutableLiveData<>();
         }
-        MutableLiveData<List<Question>> questionData = new MutableLiveData<>();
-        questionData.setValue(questions);
-        return questionData;
+        return questions;
     }
+    public void loadQuestions()
+    {
+        if(currentQuiz.getQuestions() == null)
+        {
+            return;
+        }
+        db.collection("question").whereIn(FieldPath.documentId(), currentQuiz.getQuestions())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot value) {
+                        if(value != null && !value.isEmpty())
+                        {
+                            List<Question> newData = new ArrayList<>();
+                            for(DocumentSnapshot doc : value.getDocuments())
+                            {
+                                Question question = doc.toObject(Question.class);
+                                if(question != null)
+                                {
+                                    question.setEntityKey(doc.getId());
+                                    newData.add(question);
+                                }
+                                questions.setValue(newData);
+                            }
+                        }
+                    }
+                });
+    }
+    public void setCurrentQuestion(Question question)
+    {
+        currentQuestion = question;
+    }
+    public Question getCurrentQuestion()
+    {
+        return currentQuestion;
+    }
+    public void createQuestion(Question question, final Quiz quiz) {
+        CollectionReference cf = db.collection("question");
+        cf.add(question)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        //evt problem her (by ref or copy)
+                        quiz.getQuestions().add(documentReference.getId());
+                        //update
+                        update(quiz);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "There was an error creating '" + "item" + "' in '" + "questions" + "'!", e);
+                    }
+                });
+    }
+    private Question getQuestion(String id)
+    {
+        final String documentName = id;
+        DocumentReference documentReference = db.collection("questions").document(documentName);
+        Log.i(TAG, "Getting '" + documentName + "' in '" + "questions" + "'.");
+        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, Question>() {
+            @Override
+            public Question then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot.exists()) {
+                    return documentSnapshot.toObject(Question.class);
+                } else {
+                    Log.d(TAG, "Document '" + documentName + "' does not exist in '" + "questions" + "'.");
+                    return Question.class.newInstance();
+                }
+            }
+        }).getResult();
+    }
+    //quiz stuff
     private MutableLiveData<List<Quiz>> subscribedQuizzes;
     public LiveData<List<Quiz>> getSubscribed()
     {
@@ -179,67 +257,19 @@ public class Repository{
                     }
                 });
     }
-
-    public String createQuiz(final Quiz quiz)
+    public void createQuiz(final Quiz quiz)
     {
-        //TODO: check if works
-        String quizId = db.collection("quiz").add(quiz).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        setCurrentQuiz(quiz);
+        db.collection("quiz").add(quiz).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-
-            }
-        }).getResult().getId();
-        user.addSubscribedQuiz(quizId);
-        update(user);
-        return quizId;
-    }
-    public void createQuestion(Question question, final Quiz quiz) {
-        CollectionReference cf = db.collection("question");
-        cf.add(question)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //evt problem her (by ref or copy)
-                        quiz.getQuestions().add(documentReference.getId());
-                        //update
-                        update(quiz);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "There was an error creating '" + "item" + "' in '" + "questions" + "'!", e);
+                user.addSubscribedQuiz(documentReference.getId());
+                quiz.setEntityKey(documentReference.getId());
+                update(user);
+                setCurrentQuiz(quiz);
             }
         });
-    }
-    private Question getQuestion(String id)
-    {
-        final String documentName = id;
-        DocumentReference documentReference = db.collection("questions").document(documentName);
-        Log.i(TAG, "Getting '" + documentName + "' in '" + "questions" + "'.");
-        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, Question>() {
-            @Override
-            public Question then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if (documentSnapshot.exists()) {
-                    return documentSnapshot.toObject(Question.class);
-                } else {
-                    Log.d(TAG, "Document '" + documentName + "' does not exist in '" + "questions" + "'.");
-                    return Question.class.newInstance();
-                }
-            }
-        }).getResult();
-    }
-    private void update(IEntity entity) {
-        final String documentName = entity.getEntityKey();
-        DocumentReference documentReference = db.collection(entity.getCollectionName()).document(documentName);
 
-        documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "There was an error updating '" + documentName + "' in '" + "quiz" + "'.", e);
-            }
-        });
     }
     public List<Quiz> getMostPopularQuizzes()
     {
@@ -273,17 +303,54 @@ public class Repository{
         });
     }
 
-    public void addQuiz(String quizId)
+    public Boolean toggleFollow(String quizId)
     {
         if(user.getSubscribedQuizzes() != null)
         {
             if(user.getSubscribedQuizzes().contains(quizId))
             {
-                return;
+                user.getSubscribedQuizzes().remove(quizId);
+                return false;
             }
         }
         user.addSubscribedQuiz(quizId);
         update(user);
+        return true;
+    }
+
+    private Quiz currentQuiz;
+    public void setCurrentQuiz(Quiz quiz)
+    {
+        currentQuiz = quiz;
+    }
+    public Quiz getCurrentQuiz()
+    {
+        return currentQuiz;
+    }
+    public Boolean toggleShared(Quiz quiz)
+    {
+        quiz.setShared(!quiz.getShared());
+        update(quiz);
+        return quiz.getShared();
+    }
+    //general
+    public void update(IEntity entity) {
+        final String documentName = entity.getEntityKey();
+        DocumentReference documentReference = db.collection(entity.getCollectionName()).document(documentName);
+
+        documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "There was an error updating '" + documentName + "' in '" + "quiz" + "'.", e);
+            }
+        });
+    }
+    public void delete(IEntity entity)
+    {
+        final String documentName = entity.getEntityKey();
+        DocumentReference documentReference = db.collection(entity.getCollectionName()).document(documentName);
+
+        documentReference.delete();
     }
     private Repository()
     {
