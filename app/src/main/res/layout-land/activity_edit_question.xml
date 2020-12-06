@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Views.EditQuestionActivity">
+    tools:context=".Activities.EditQuestionActivity">
 
     <TextView
         android:id="@+id/txtEditQuestionTitle"
@@ -22,10 +22,11 @@
         android:id="@+id/imgEditQuestionImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtEditQuestionTitle"
+        app:layout_constraintTop_toBottomOf="@+id/btnEditDelete"
         tools:srcCompat="@tools:sample/avatars" />
 
     <EditText
@@ -34,15 +35,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
         android:hint="@string/hintEditImageURL"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imgEditQuestionImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgEditQuestionImage" />
+        app:layout_constraintTop_toTopOf="@+id/imgEditQuestionImage" />
 
     <EditText
         android:id="@+id/editEditQuestionText"
@@ -56,8 +56,7 @@
         android:ems="10"
         android:hint="@string/hintEditQuestionText"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintEnd_toStartOf="@+id/imgEditQuestionImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editEditImageText" />
 
@@ -74,8 +73,7 @@
         android:hint="@string/hintEditAnswerText"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/btnEditSave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toStartOf="@+id/imgEditQuestionImage"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button

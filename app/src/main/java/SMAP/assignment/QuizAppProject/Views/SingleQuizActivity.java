@@ -1,9 +1,11 @@
 package SMAP.assignment.QuizAppProject.Views;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +26,7 @@ public class SingleQuizActivity extends AppCompatActivity {
 
     static final String TAG = "SingleQuizActivity";
     private TextView txtTitle, txtQuizOwner;
-    private Button btnEdit, btnPlay, btnShareAdd;
+    private Button btnEdit, btnPlay, btnShareAdd, btnBack, btnDelete;
     private SingleQuizViewModel vm;
     private Quiz quiz;
     private Boolean isOwner = false;
@@ -64,23 +66,58 @@ public class SingleQuizActivity extends AppCompatActivity {
         btnPlay = findViewById(R.id.btnPlaySingleQuiz);
         btnShareAdd = findViewById(R.id.btnShareAddSingleQuiz);
         btnEdit = findViewById(R.id.btnEdit);
+        btnBack = findViewById(R.id.btnSingleBack);
+        btnDelete = findViewById(R.id.btnSingleDelete);
 
         toggleUi();
 
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                vm.deleteQuiz(quizId);
+                                finish();
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(SingleQuizActivity.this);
+                builder.setMessage("Delete quiz?").setPositiveButton("Delete", dialogClickListener)
+                        .setNegativeButton("Cancel", dialogClickListener).show();
+            }
+        });
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoQuestionsActivity();
             }
         });
-
         btnShareAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleUi();
             }
         });
-
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoPlayActivity();
+            }
+        });
     }
     private String getResource(int id)
     {

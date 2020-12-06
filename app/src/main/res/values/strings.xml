@@ -37,4 +37,6 @@
     <string name="btnPlayLess">Less</string>
     <string name="btnPlayMore">More</string>
     <string name="txtSingleQuizOwnerPrefix">By</string>
+    <string name="btnBack">Back</string>
+    <string name="btnNew">New</string>
 </resources>

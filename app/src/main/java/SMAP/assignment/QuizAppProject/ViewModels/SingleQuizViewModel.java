@@ -20,12 +20,12 @@ import SMAP.assignment.QuizAppProject.Database.Repository;
 public class SingleQuizViewModel extends AndroidViewModel {
 
     private static final String TAG = "SingleQuizViewModel";
-    Repository repository;
+    Repository repo;
 
-    private Quiz selectedQuiz;
+
     public SingleQuizViewModel(@NonNull Application application) {
         super(application);
-        repository = Repository.getInstance();
+        repo = Repository.getRepository(application);
     }
     public Quiz getSelectedQuiz()
     {

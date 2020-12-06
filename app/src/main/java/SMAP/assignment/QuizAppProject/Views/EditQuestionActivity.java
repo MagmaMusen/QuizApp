@@ -1,10 +1,13 @@
 package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,9 +20,12 @@ import SMAP.assignment.QuizAppProject.ViewModels.EditQuestionViewModel;
 
 public class EditQuestionActivity extends AppCompatActivity {
 
+    private static final String TAG = "EditQuestionActivity";
+
     Button btnCancel, btnSave, btnDelete;
     ImageView imgQuestion;
-    EditText editAnswer, editQuestion;
+    MutableLiveData<Question> question;
+    EditText editAnswer, editQuestion, editImage;
     EditQuestionViewModel vm;
     String quizId;
 
@@ -44,6 +50,7 @@ public class EditQuestionActivity extends AppCompatActivity {
         imgQuestion = findViewById(R.id.imgEditQuestionImage);
         editAnswer = findViewById(R.id.editEditAnswerText);
         editQuestion = findViewById(R.id.editEditAnswerText);
+        editImage = findViewById(R.id.editEditImageText);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +61,12 @@ public class EditQuestionActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                question.getValue().setImage(editImage.getText().toString());
+                question.getValue().setAnswer(editAnswer.getText().toString());
+                question.getValue().setQuestionText(editQuestion.getText().toString());
+
+                vm.addQuestion(quizId, question.getValue());
+                finish();
                 vm.updateQuestion(question);
                 finish();
             }
@@ -66,5 +79,12 @@ public class EditQuestionActivity extends AppCompatActivity {
             }
         });
 
+
+    public void prepopulateEditField(){
+        if(question != null) {
+            editAnswer.setText(question.getValue().getAnswer());
+            editQuestion.setText(question.getValue().getQuestionText());
+            editImage.setText(question.getValue().getImage());
+        }
     }
 }

@@ -2,6 +2,7 @@ package SMAP.assignment.QuizAppProject.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.List;
 
@@ -24,8 +28,9 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
     private final String TAG = "QuestionsActivity";
     private QuestionsViewModel vm;
     private RecyclerView rcv;
-
+    private Button btnBack, btnNew;
     private QuestionAdapter adapter;
+    private EditText editQuizNameInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,29 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         rcv.setLayoutManager(new LinearLayoutManager(this));
         rcv.setAdapter(adapter);
 
+        editQuizNameInput = findViewById(R.id.editQuestionsName);
+        editQuizNameInput.setText(quiz.getValue().getName());
 
+        btnBack = findViewById(R.id.btnQuestionsBack);
+        btnNew = findViewById(R.id.btnQuestionsNew);
+
+
+
+        btnNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                questionId = null;
+                gotoEditQuestionActivity();
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveQuizName();
+                finish();
+            }
+        });
     }
 
 
@@ -69,5 +96,24 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         vm.setCurrentQuestion(question);
         Intent i = new Intent(this, EditQuestionActivity.class);
         startActivity(i);
+    public void onQuestionClicked(int index) {
+        questionId = questions.getValue().get(index).getId();
+        gotoEditQuestionActivity();
+    }
+
+    private void gotoEditQuestionActivity(){
+        Intent intent = new Intent(this, EditQuestionActivity.class);
+        intent.putExtra(Constants.QUIZID, quizId);
+        intent.putExtra(Constants.QUESTIONID, questionId);
+        startActivity(intent);
+    }
+
+    private void saveQuizName(){
+        // Save quiz name if specified, otherwise give name "Unnamed Quiz".
+        if(editQuizNameInput.getText().toString() == null) {
+            vm.setQuizName(quizId, "Unnamed Quiz");
+        } else {
+            vm.setQuizName(quizId, editQuizNameInput.getText().toString());
+        }
     }
 }
