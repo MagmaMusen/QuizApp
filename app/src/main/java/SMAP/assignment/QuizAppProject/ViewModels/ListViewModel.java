@@ -26,6 +26,10 @@ public class ListViewModel extends ViewModel {
     {
         repository = Repository.getInstance();
     }
+    public void clearQuestions()
+    {
+        repository.clearQuestions();
+    }
     public void createQuiz()
     {
         repository.createQuiz(new Quiz("Default", repository.getCurrentUser().getUid(), false));

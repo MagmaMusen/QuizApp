@@ -108,6 +108,10 @@ public class Repository{
     //question stuff
     private Question currentQuestion;
     private MutableLiveData<List<Question>> questions;
+    public void clearQuestions()
+    {
+        questions = new MutableLiveData<>();
+    }
     public LiveData<List<Question>> getQuestions()
     {
         if(questions == null)
@@ -304,19 +308,6 @@ public class Repository{
         });
 
     }
-    public Task<Boolean> existsQuiz(final String documentName) {
-        DocumentReference documentReference = db.collection("quiz").document(documentName);
-        Log.i(TAG, "Checking existence of '" + documentName + "' in '" + "quiz" + "'.");
-
-        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
-            @Override
-            public Boolean then(@NonNull Task<DocumentSnapshot> task) {
-                Log.d(TAG,"Checking if '" + documentName + "' exists in '" + "quiz" +"'.");
-                return task.getResult().exists();
-            }
-        });
-    }
-
     public Boolean toggleFollow(String quizId)
     {
         if(user.getSubscribedQuizzes() != null)

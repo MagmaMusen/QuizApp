@@ -26,7 +26,6 @@ public class QuestionsViewModel extends AndroidViewModel {
 
         repository = Repository.getInstance();
     }
-    //TODO watch this
     public void setCurrentQuestion(Question question)
     {
         repository.setCurrentQuestion(question);
