@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import SMAP.assignment.QuizAppProject.Constants;
 import SMAP.assignment.QuizAppProject.Database.Quiz;
@@ -40,7 +41,7 @@ public class SingleQuizActivity extends AppCompatActivity {
         vm = new ViewModelProvider(this).get(SingleQuizViewModel.class);
 
         quiz = vm.getSelectedQuiz();
-
+        vm.ensureQuizLoaded();
         if(vm.getCurrentUserId() == null){
             Log.d(TAG, "onCreate: " + "UserId is null!");
             finish();
@@ -55,11 +56,16 @@ public class SingleQuizActivity extends AppCompatActivity {
 
         // Quiz owner setup.
         txtQuizOwner = findViewById(R.id.txtSingleQuizOwner);
-        vm.getQuizOwnerDisplayName().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        vm.getQuizOwner().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 User owner = documentSnapshot.toObject(User.class);
+                if(owner.getUid().equals(vm.getCurrentUserId()))
+                {
+                    isOwner = true;
+                }
                 txtQuizOwner.setText(getResource(R.string.txtSingleQuizOwnerPrefix) + " " + owner.getDisplayName());
+                updateEditUI();
             }
         });
 
@@ -70,7 +76,7 @@ public class SingleQuizActivity extends AppCompatActivity {
         btnDelete = findViewById(R.id.btnSingleDelete);
 
         toggleUi();
-
+        updateEditUI();
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,7 +85,7 @@ public class SingleQuizActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
-                                vm.deleteQuiz(quizId);
+                                vm.deleteQuiz(vm.getSelectedQuiz());
                                 finish();
                                 break;
 
@@ -103,13 +109,34 @@ public class SingleQuizActivity extends AppCompatActivity {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //vm.setCurrentQuestion();
                 gotoQuestionsActivity();
             }
         });
         btnShareAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleUi();
+                if(isOwner) {
+                    // Toggle shared.
+                    Boolean shared = vm.toggleShared();
+                    if(shared)
+                    {
+                        btnShareAdd.setText(getResources().getString(R.string.btnMakePrivate));
+                    }
+                    else
+                    {
+                        btnShareAdd.setText(getResources().getString(R.string.btnShare));
+                    }
+                } else {
+                    //Toggle Follow
+                    Boolean isFollowed = vm.toggleFollowQuiz();
+                    if(isFollowed) {
+                        btnShareAdd.setText(getResources().getString(R.string.btnUnfollow));
+                    } else {
+                        btnShareAdd.setText(getResources().getString(R.string.btnFollow));
+                    }
+
+                }
             }
         });
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -127,9 +154,9 @@ public class SingleQuizActivity extends AppCompatActivity {
 
     //function for button
     private void toggleUi(){
-        if(quiz.getUserId() == vm.getCurrentUserId()) {
+        if(isOwner) {
             // Toggle shared.
-            Boolean shared = vm.toggleShared();
+            Boolean shared = vm.getSelectedQuiz().getShared();
             if(shared)
             {
                 btnShareAdd.setText(this.getResources().getString(R.string.btnMakePrivate));
@@ -140,7 +167,7 @@ public class SingleQuizActivity extends AppCompatActivity {
             }
         } else {
             //Toggle Follow
-            Boolean isFollowed = vm.toggleFollowQuiz();
+            Boolean isFollowed = vm.getFollowed(vm.getSelectedQuiz().getEntityKey());
             if(isFollowed) {
                 btnShareAdd.setText(this.getResources().getString(R.string.btnUnfollow));
             } else {
@@ -148,6 +175,29 @@ public class SingleQuizActivity extends AppCompatActivity {
             }
 
         }
+    }
+    private void updateEditUI(){
+        // Enables and disables edit and delete buttons depending on ownership.
+        if(isOwner) {
+            btnDelete.setEnabled(true);
+            btnEdit.setEnabled(true);
+        } else {
+            btnDelete.setEnabled(false);
+            btnEdit.setEnabled(false);
+        }
+    }
+    private void gotoPlayActivity()
+    {
+        if(vm.getSelectedQuiz().getQuestions() == null)
+        {
+            return;
+        }
+        if(vm.getSelectedQuiz().getQuestions().size() == 0)
+        {
+            return;
+        }
+        Intent intent = new Intent(this, PlayActivity.class);
+        startActivity(intent);
     }
     private void gotoQuestionsActivity(){
         Intent intent = new Intent(this, QuestionsActivity.class);

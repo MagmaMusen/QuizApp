@@ -4,9 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.firebase.ui.auth.AuthUI;
@@ -30,11 +28,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
-import org.w3c.dom.Document;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -119,11 +115,20 @@ public class Repository{
     }
     public void loadQuestions()
     {
-        if(currentQuiz.getQuestions() == null)
+        if(currentQuiz.getQuestions() == null )
+        {
+            currentQuiz.setQuestions(new ArrayList<String>());
+        }
+        if(currentQuiz.getQuestions().size() == 0)
         {
             return;
         }
-        db.collection("question").whereIn(FieldPath.documentId(), currentQuiz.getQuestions())
+        if(questions == null)
+        {
+            questions = new MutableLiveData<>();
+        }
+        db.collection("question")
+                .whereIn(FieldPath.documentId(), currentQuiz.getQuestions())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -139,8 +144,8 @@ public class Repository{
                                     question.setEntityKey(doc.getId());
                                     newData.add(question);
                                 }
-                                questions.setValue(newData);
                             }
+                            questions.setValue(newData);
                         }
                     }
                 });
@@ -153,16 +158,22 @@ public class Repository{
     {
         return currentQuestion;
     }
-    public void createQuestion(Question question, final Quiz quiz) {
+    public void createQuestion(Question question) {
         CollectionReference cf = db.collection("question");
         cf.add(question)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         //evt problem her (by ref or copy)
-                        quiz.getQuestions().add(documentReference.getId());
+                        if(currentQuiz.getQuestions() == null)
+                        {
+                            currentQuiz.setQuestions(new ArrayList<String>());
+                        }
+                        List<String> quizData = currentQuiz.getQuestions();
+                        quizData.add(documentReference.getId());
+                        currentQuiz.setQuestions(quizData);
                         //update
-                        update(quiz);
+                        update(currentQuiz);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -171,24 +182,6 @@ public class Repository{
                         Log.d(TAG, "There was an error creating '" + "item" + "' in '" + "questions" + "'!", e);
                     }
                 });
-    }
-    private Question getQuestion(String id)
-    {
-        final String documentName = id;
-        DocumentReference documentReference = db.collection("questions").document(documentName);
-        Log.i(TAG, "Getting '" + documentName + "' in '" + "questions" + "'.");
-        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, Question>() {
-            @Override
-            public Question then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if (documentSnapshot.exists()) {
-                    return documentSnapshot.toObject(Question.class);
-                } else {
-                    Log.d(TAG, "Document '" + documentName + "' does not exist in '" + "questions" + "'.");
-                    return Question.class.newInstance();
-                }
-            }
-        }).getResult();
     }
     //quiz stuff
     private MutableLiveData<List<Quiz>> subscribedQuizzes;
@@ -270,25 +263,6 @@ public class Repository{
             }
         });
 
-    }
-    public List<Quiz> getMostPopularQuizzes()
-    {
-        final List<Quiz> quizzes = new ArrayList<>();
-        CollectionReference cf = db.collection("quiz");
-        cf.orderBy("rating", Query.Direction.ASCENDING).limit(2).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if(queryDocumentSnapshots != null)
-                {
-
-                    for(QueryDocumentSnapshot snap :queryDocumentSnapshots)
-                    {
-                        quizzes.add(snap.toObject(Quiz.class));
-                    }
-                }
-            }
-        });
-        return quizzes;
     }
     public Task<Boolean> existsQuiz(final String documentName) {
         DocumentReference documentReference = db.collection("quiz").document(documentName);

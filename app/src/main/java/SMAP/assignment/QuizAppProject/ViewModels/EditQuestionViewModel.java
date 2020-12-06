@@ -26,6 +26,10 @@ public class EditQuestionViewModel extends AndroidViewModel {
     {
         repository.update(question);
     }
+    public void createNewQuestion(Question question)
+    {
+        repository.createQuestion(question);
+    }
     public Question getCurrentQuestion()
     {
         return repository.getCurrentQuestion();

@@ -52,7 +52,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     @Override
     public void onBindViewHolder(@NonNull QuestionViewHolder holder, int position) {
         Question q = questionList.get(position);
-        if(q.getImage() != 0) {
+        holder.txtThumbnail.setText(q.getQuestion());
+        if(q.getImage() != null) {
             Glide.with(holder.imgThumbnail.getContext()).load(q.getImage()).into(holder.imgThumbnail);
         }
     }

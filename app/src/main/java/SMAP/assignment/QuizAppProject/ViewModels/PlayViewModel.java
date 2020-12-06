@@ -17,36 +17,14 @@ import SMAP.assignment.QuizAppProject.Database.Repository;
 public class PlayViewModel  extends AndroidViewModel {
     Repository repository;
     private String TAG = "PlayViewModel";
-    private MutableLiveData<List<Question>> questions;
 
     public PlayViewModel(@NonNull Application application) {
         super(application);
 
         repository = Repository.getInstance();
     }
-
-    public LiveData<List<Question>> getQuestions(String quizId){
-        //repo.getQuestion for quizId
-        // Dummy get.
-        Log.d(TAG, "getQuestions called!");
-        if(questions == null)
-        {
-            questions = new MutableLiveData<>();
-            questions.setValue(new ArrayList<Question>());
-            for(int i = 0; i<20; i++)
-            {
-                //questions.getValue().add(new TextImageToTextQuestion());
-            }
-            Log.d(TAG, "Added dummy data!");
-        }
-        return questions;
-    }
     public List<Question> getQuestions()
     {
-        return null;
+        return repository.getQuestions().getValue();
     }
-    public void wrongAnswer(String questionId){
-
-    }
-
 }

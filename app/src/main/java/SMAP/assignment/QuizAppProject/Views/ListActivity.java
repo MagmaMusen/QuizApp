@@ -88,7 +88,6 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
         startActivity(i);
     }
 
-    //TODO: skal rettes til så den passer til det View Magnus har lavet
     public void GoToCreate(){
         vm.createQuiz();
         Intent i = new Intent(this, QuestionsActivity.class);

@@ -24,10 +24,9 @@ public class EditQuestionActivity extends AppCompatActivity {
 
     Button btnCancel, btnSave, btnDelete;
     ImageView imgQuestion;
-    MutableLiveData<Question> question;
     EditText editAnswer, editQuestion, editImage;
     EditQuestionViewModel vm;
-    String quizId;
+    Boolean newQuestion;
 
     private Question question;
 
@@ -49,8 +48,10 @@ public class EditQuestionActivity extends AppCompatActivity {
         btnDelete = findViewById(R.id.btnEditDelete);
         imgQuestion = findViewById(R.id.imgEditQuestionImage);
         editAnswer = findViewById(R.id.editEditAnswerText);
-        editQuestion = findViewById(R.id.editEditAnswerText);
+        editQuestion = findViewById(R.id.editEditQuestionText);
         editImage = findViewById(R.id.editEditImageText);
+
+        prepopulateEditField();
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,13 +62,21 @@ public class EditQuestionActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                question.getValue().setImage(editImage.getText().toString());
-                question.getValue().setAnswer(editAnswer.getText().toString());
-                question.getValue().setQuestionText(editQuestion.getText().toString());
-
-                vm.addQuestion(quizId, question.getValue());
-                finish();
-                vm.updateQuestion(question);
+                String image = editImage.getText().toString();
+                String answer = editAnswer.getText().toString();
+                String question = editQuestion.getText().toString();
+                Question editQuestion = vm.getCurrentQuestion();
+                editQuestion.setAnswer(answer);
+                editQuestion.setQuestion(question);
+                editQuestion.setImage(image);
+                if(editQuestion.isNew)
+                {
+                    vm.createNewQuestion(editQuestion);
+                }
+                else
+                {
+                    vm.updateQuestion(editQuestion);
+                }
                 finish();
             }
         });
@@ -79,12 +88,13 @@ public class EditQuestionActivity extends AppCompatActivity {
             }
         });
 
-
-    public void prepopulateEditField(){
+    }
+    public void prepopulateEditField()
+    {
         if(question != null) {
-            editAnswer.setText(question.getValue().getAnswer());
-            editQuestion.setText(question.getValue().getQuestionText());
-            editImage.setText(question.getValue().getImage());
+            editAnswer.setText(question.getAnswer());
+            editQuestion.setText(question.getQuestion());
+            editImage.setText(question.getImage());
         }
     }
 }

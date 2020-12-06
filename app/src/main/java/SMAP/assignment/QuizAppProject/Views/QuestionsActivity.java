@@ -47,13 +47,11 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
                 adapter.updateQuestionList(questions);
             }
         });
-
-
     }
-
     @Override
     protected void onResume() {
         super.onResume();
+        editQuizNameInput.setText(vm.getCurrentQuiz());
         vm.loadQuestions();
     }
 
@@ -66,7 +64,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         rcv.setAdapter(adapter);
 
         editQuizNameInput = findViewById(R.id.editQuestionsName);
-        editQuizNameInput.setText(quiz.getValue().getName());
 
         btnBack = findViewById(R.id.btnQuestionsBack);
         btnNew = findViewById(R.id.btnQuestionsNew);
@@ -76,7 +73,10 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                questionId = null;
+                //TODO make sure next activity knows it is new
+                Question question = new Question();
+                question.isNew = true;
+                vm.setCurrentQuestion(question);
                 gotoEditQuestionActivity();
             }
         });
@@ -90,30 +90,22 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         });
     }
 
-
     @Override
     public void onQuestionClicked(Question question) {
+        question.isNew = false;
         vm.setCurrentQuestion(question);
-        Intent i = new Intent(this, EditQuestionActivity.class);
-        startActivity(i);
-    public void onQuestionClicked(int index) {
-        questionId = questions.getValue().get(index).getId();
         gotoEditQuestionActivity();
     }
 
     private void gotoEditQuestionActivity(){
         Intent intent = new Intent(this, EditQuestionActivity.class);
-        intent.putExtra(Constants.QUIZID, quizId);
-        intent.putExtra(Constants.QUESTIONID, questionId);
         startActivity(intent);
     }
 
     private void saveQuizName(){
-        // Save quiz name if specified, otherwise give name "Unnamed Quiz".
-        if(editQuizNameInput.getText().toString() == null) {
-            vm.setQuizName(quizId, "Unnamed Quiz");
-        } else {
-            vm.setQuizName(quizId, editQuizNameInput.getText().toString());
+        String name = editQuizNameInput.getText().toString();
+        if(name != null) {
+            vm.updateQuiz(name);
         }
     }
 }

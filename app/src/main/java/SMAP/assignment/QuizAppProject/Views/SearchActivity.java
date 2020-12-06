@@ -72,6 +72,12 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.I
         rcvSearch.setAdapter(searchAdapter);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        vm.searchQuiz(edtSearch.getText().toString());
+    }
+
     public void addQuiz(Quiz quiz){
         vm.toggleFollow(quiz);
     }

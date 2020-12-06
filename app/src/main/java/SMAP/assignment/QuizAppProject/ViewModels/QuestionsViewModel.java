@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Database.Question;
+import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.Database.Repository;
 
 public class QuestionsViewModel extends AndroidViewModel {
@@ -25,6 +26,7 @@ public class QuestionsViewModel extends AndroidViewModel {
 
         repository = Repository.getInstance();
     }
+    //TODO watch this
     public void setCurrentQuestion(Question question)
     {
         repository.setCurrentQuestion(question);
@@ -36,6 +38,15 @@ public class QuestionsViewModel extends AndroidViewModel {
     public void loadQuestions()
     {
         repository.loadQuestions();
+    }
+    public String getCurrentQuiz()
+    {
+        return repository.getCurrentQuiz().getName();
+    }
+    public void updateQuiz(String name)
+    {
+        repository.getCurrentQuiz().setName(name);
+        repository.update(repository.getCurrentQuiz());
     }
 
 

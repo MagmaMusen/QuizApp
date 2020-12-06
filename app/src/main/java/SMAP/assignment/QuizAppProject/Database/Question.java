@@ -7,14 +7,15 @@ import com.google.firebase.firestore.Exclude;
 public class Question implements IEntity{
     private String answer;
     private String question;
-    private int image;
-
+    private String image;
+    @Exclude
+    public Boolean isNew;
 
     public Question() {
 
     }
 
-    public Question(String answer, String question, int image) {
+    public Question(String answer, String question, String image) {
         this.answer = answer;
         this.question = question;
         this.image = image;
@@ -36,11 +37,11 @@ public class Question implements IEntity{
         this.question = question;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

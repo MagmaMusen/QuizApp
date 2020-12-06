@@ -32,9 +32,9 @@ public class PlayActivity extends AppCompatActivity {
     private Button btnExit, btnSkip, btnAnswer;
     private EditText editAnswerInput;
     private PlayViewModel vm;
-    private String quizId;
-    private int currentQuestionIndex = -1;
-
+    private int currentQuestionIndex = 0;
+    private int score;
+    private List<Question> quizQuestions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +42,9 @@ public class PlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_play);
 
         setupUI();
-
         vm = new ViewModelProvider(this).get(PlayViewModel.class);
 
-        List<Question> questions = vm.getQuestions();
-
-        // Set index to -1 and go to next question, which is 0.
-        currentQuestionIndex = -1;
+        quizQuestions = vm.getQuestions();
         nextQuestion();
     }
 
@@ -65,7 +61,9 @@ public class PlayActivity extends AppCompatActivity {
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"Skipped, answer was " + questions.getValue().get(currentQuestionIndex).getAnswer(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Skipped, answer was " + quizQuestions.get(currentQuestionIndex).getAnswer(), Toast.LENGTH_SHORT).show();
+                score--;
+                updateIndex();
                 nextQuestion();
             }
         });
@@ -82,18 +80,18 @@ public class PlayActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Remove whitespace and go to lowercase for answer and input.
                 String answerInput = editAnswerInput.getText().toString();
-                answerInput = answerInput.replaceAll("\\s+","");
-                answerInput = answerInput.toLowerCase();
+                answerInput = answerInput.replaceAll("\\s+","").toLowerCase();
 
-                String answerCorrect = questions.getValue().get(currentQuestionIndex).getAnswer();
-                answerCorrect = answerCorrect.replaceAll("\\s+","");
-                answerCorrect = answerCorrect.toLowerCase();
+                String answerCorrect = quizQuestions.get(currentQuestionIndex).getAnswer();
+                answerCorrect = answerCorrect.replaceAll("\\s+","").toLowerCase();
 
                 // Compare.
                 if(answerInput.equals(answerCorrect)){
                     // Correct answer.
                     Toast.makeText(getApplicationContext(),"Correct!", Toast.LENGTH_SHORT).show();
                     editAnswerInput.setText("");
+                    score++;
+                    updateIndex();
                     nextQuestion();
 
                 } else {
@@ -105,19 +103,15 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void nextQuestion() {
+        txtQuestionNumber.setText((currentQuestionIndex + 1) + " of " + quizQuestions.size());
 
-        if(currentQuestionIndex < questions.getValue().size() - 1){
-            currentQuestionIndex++;
-        } else {
-            finish();
-        }
-        txtQuestionNumber.setText((currentQuestionIndex + 1) + " of " + questions.getValue().size());
-        Question q = questions.getValue().get(currentQuestionIndex);
-        if(q.getImage() != null) {
-            Glide.with(imgQuestion.getContext()).load(q.getImage()).into(imgQuestion);
-            Log.d(TAG, "changeQuestion: Glide tried to load image with glide!");
-        }
-
-        txtQuestion.setText(q.getQuestionText());
+        //todo support images somehow
+        Question q = quizQuestions.get(currentQuestionIndex);
+        txtQuestion.setText(q.getQuestion());
+    }
+    private void updateIndex()
+    {
+        currentQuestionIndex++;
+        currentQuestionIndex %= quizQuestions.size();
     }
 }
