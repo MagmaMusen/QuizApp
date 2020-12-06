@@ -32,6 +32,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.android.gms.tasks.Tasks.await;
@@ -85,6 +86,8 @@ public class Repository{
             }
         });
     }
+
+
     public void setCurrentUserDisplayName(String name)
     {
         FirebaseUser user = auth.getCurrentUser();
@@ -254,6 +257,43 @@ public class Repository{
                     }
                 });
     }
+
+
+    private MutableLiveData<List<Quiz>> allSharedQuizzes;
+
+    public LiveData<List<Quiz>> getAllSharedQuizzes(){
+        if(allSharedQuizzes == null) {
+            allSharedQuizzes = new MutableLiveData<>();
+        }
+        updateSharedQuizzesGetter();
+        return allSharedQuizzes;
+    }
+
+    private void updateSharedQuizzesGetter(){
+        db.collection("quiz").whereEqualTo("shared", true)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot value) {
+                        if(value != null && !value.isEmpty())
+                        {
+                            List<Quiz> newData = new ArrayList<>();
+                            for(DocumentSnapshot doc : value.getDocuments())
+                            {
+                                Quiz quiz = doc.toObject(Quiz.class);
+                                quiz.setEntityKey(doc.getId());
+                                newData.add(quiz);
+
+                                allSharedQuizzes.setValue(newData);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+
+
     public void createQuiz(final Quiz quiz)
     {
         setCurrentQuiz(quiz);

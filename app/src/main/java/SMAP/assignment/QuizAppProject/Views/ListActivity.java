@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,12 +20,14 @@ import java.util.List;
 import SMAP.assignment.QuizAppProject.Database.Quiz;
 import SMAP.assignment.QuizAppProject.Database.User;
 import SMAP.assignment.QuizAppProject.R;
+import SMAP.assignment.QuizAppProject.Services.RecommendationService;
 import SMAP.assignment.QuizAppProject.ViewModels.ListViewModel;
 import SMAP.assignment.QuizAppProject.Views.Adapters.ListAdapter;
 
 public class ListActivity extends AppCompatActivity implements ListAdapter.IListItemClickedListener {
 
     //UI Widgets
+    private static final String TAG = "ListActivity";
     private Button btnSearch, btnCreate;
     private TextView txtLoggedInUser;
     private RecyclerView rcvQuizzes;
@@ -48,7 +51,13 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
             }
         });
 
+        Log.d(TAG, "onCreate: Run!");
+
+        // Start service that recommends a random shared quiz periodically.
+        Intent RecommendServiceIntent = new Intent(this, RecommendationService.class);
+        startService(RecommendServiceIntent);
     }
+
     private void setUpUI()
     {
         btnSearch = findViewById(R.id.btnSearch);

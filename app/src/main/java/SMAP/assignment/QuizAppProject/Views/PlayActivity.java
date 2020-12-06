@@ -107,6 +107,10 @@ public class PlayActivity extends AppCompatActivity {
 
         //todo support images somehow
         Question q = quizQuestions.get(currentQuestionIndex);
+        if(q.getImage() != null) {
+            Glide.with(imgQuestion.getContext()).load(q.getImage()).into(imgQuestion);
+        }
+
         txtQuestion.setText(q.getQuestion());
     }
     private void updateIndex()
