@@ -56,16 +56,20 @@ public class SingleQuizActivity extends AppCompatActivity {
 
         // Quiz owner setup.
         txtQuizOwner = findViewById(R.id.txtSingleQuizOwner);
+        Log.d(TAG, "setupUI: ");
         vm.getQuizOwner().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 User owner = documentSnapshot.toObject(User.class);
+                Log.d(TAG, "onSuccess: " + owner.getUid() + " ? " + vm.getCurrentUserId());
                 if(owner.getUid().equals(vm.getCurrentUserId()))
                 {
+                    Log.d(TAG, "onSuccess: they are equal");
                     isOwner = true;
                 }
                 txtQuizOwner.setText(getResource(R.string.txtSingleQuizOwnerPrefix) + " " + owner.getDisplayName());
                 updateEditUI();
+                toggleUi();
             }
         });
 
@@ -75,7 +79,7 @@ public class SingleQuizActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnSingleBack);
         btnDelete = findViewById(R.id.btnSingleDelete);
 
-        toggleUi();
+
         updateEditUI();
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
