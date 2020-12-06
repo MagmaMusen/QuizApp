@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import SMAP.assignment.QuizAppProject.Constants;
 import SMAP.assignment.QuizAppProject.Database.Question;
@@ -31,6 +34,11 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
     private Button btnBack, btnNew;
     private QuestionAdapter adapter;
     private EditText editQuizNameInput;
+
+    // Periodic update related.
+    private TimerTask timerTask;
+    private Timer timer;
+    final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,13 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         super.onResume();
         editQuizNameInput.setText(vm.getCurrentQuiz());
         vm.loadQuestions();
+        startTimer();
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        stoptimertask();
     }
 
     private void setupUI(){
@@ -73,7 +88,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                saveQuizName();
                 Question question = new Question();
                 question.isNew = true;
                 vm.setCurrentQuestion(question);
@@ -108,4 +123,43 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
             vm.updateQuiz(name);
         }
     }
+
+
+    // Taken from: https://examples.javacodegeeks.com/android/core/activity/android-timertask-example/
+    public void startTimer() {
+        // Set a new Timer
+        timer = new Timer();
+
+        // Initialize the TimerTask's job
+        initializeTimerTask();
+
+        // Schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
+        timer.schedule(timerTask, 500, 5000); //
+    }
+
+    public void stoptimertask() {
+        // Stop the timer, if it's not already null
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    public void initializeTimerTask() {
+
+        timerTask = new TimerTask() {
+            public void run() {
+
+
+                handler.post(new Runnable() {
+                    public void run() {
+                        // Get newest questions.
+                        vm.loadQuestions();
+                        Log.d(TAG, "run: timer test!");
+                    }
+                });
+            }
+        };
+    }
+
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,9 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import SMAP.assignment.QuizAppProject.Constants;
 import SMAP.assignment.QuizAppProject.Database.Quiz;
@@ -31,6 +35,11 @@ public class SingleQuizActivity extends AppCompatActivity {
     private SingleQuizViewModel vm;
     private Quiz quiz;
     private Boolean isOwner = false;
+
+    // Periodic update related.
+    private TimerTask timerTask;
+    private Timer timer;
+    final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,5 +216,58 @@ public class SingleQuizActivity extends AppCompatActivity {
         Intent intent = new Intent(this, QuestionsActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startTimer();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stoptimertask();
+    }
+
+
+    // Taken from: https://examples.javacodegeeks.com/android/core/activity/android-timertask-example/
+    public void startTimer() {
+        // Set a new Timer
+        timer = new Timer();
+
+        // Initialize the TimerTask's job
+        initializeTimerTask();
+
+        // Schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
+        timer.schedule(timerTask, 500, 5000); //
+    }
+
+    public void stoptimertask() {
+        // Stop the timer, if it's not already null
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+
+
+    public void initializeTimerTask() {
+
+        timerTask = new TimerTask() {
+            public void run() {
+
+
+                handler.post(new Runnable() {
+                    public void run() {
+                        // Get newest questions.
+                        txtTitle.setText(vm.getSelectedQuiz().getName());
+                        Log.d(TAG, "run: timer test!");
+                    }
+                });
+            }
+        };
+    }
+
 }
 
