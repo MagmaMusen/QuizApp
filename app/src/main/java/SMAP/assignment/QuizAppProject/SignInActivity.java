@@ -39,7 +39,7 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setUpUI();
         if (auth.getCurrentUser() != null) {
-            gotoActivity();
+            setUser();
         }
     }
     private void setUpUI()
@@ -78,23 +78,27 @@ public class SignInActivity extends AppCompatActivity {
         {
             if(requestCode == REQUEST_LOGIN)
             {
-                String uid = auth.getCurrentUser().getUid();
-                repository.createUser(new User(uid, null, username));
-                gotoActivity();
+                repository.createUser(new User(auth.getCurrentUser().getUid(), null, edtUsername.getText().toString()))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                gotoActivity();
+                            }
+                        });
             }
         }
     }
-    private void gotoActivity()
+    private void setUser()
     {
-        repository.getCurrentUser().addOnSuccessListener(new OnSuccessListener<User>() {
+        repository.setCurrentUser().addOnSuccessListener(new OnSuccessListener<User>() {
             @Override
             public void onSuccess(User user) {
-                foundUser();
+                gotoActivity();
             }
         });
 
     }
-    private void foundUser()
+    private void gotoActivity()
     {
         Intent i = new Intent(this, ListActivity.class);
         startActivity(i);

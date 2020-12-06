@@ -24,35 +24,13 @@ public class SearchViewModel extends ViewModel {
     {
         repository = Repository.getInstance();
     }
-    public void searchQuiz(final String quizName){
+    public void searchQuiz(String quizName){
 
-        repository.getAllQuizzes().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot value) {
-                if(value != null && !value.isEmpty())
-                {
-                    List<Quiz> newData = new ArrayList<>();
-                    for(DocumentSnapshot doc : value.getDocuments())
-                    {
-                        Quiz quiz = doc.toObject(Quiz.class);
-                        if(quiz != null && quiz.getName().contains(quizName))
-                        {
-                            quiz.setEntityKey(doc.getId());
-                            newData.add(quiz);
-                        }
-                        quizzes.setValue(newData);
-                    }
-                }
-            }
-        });
+        repository.updateQuizList(quizName.toLowerCase());
     }
     public LiveData<List<Quiz>> getQuizzes()
     {
-        if(quizzes == null)
-        {
-            quizzes = new MutableLiveData<>();
-        }
-        return quizzes;
+        return repository.getSearch();
     }
     public void addQuiz(Quiz quiz)
     {

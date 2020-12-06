@@ -69,12 +69,7 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
 
         txtLoggedInUser = findViewById(R.id.txtLoggedInUser);
 
-        vm.getCurrentUserName().addOnSuccessListener(new OnSuccessListener<User>() {
-            @Override
-            public void onSuccess(User user) {
-                txtLoggedInUser.setText(user.getDisplayName());
-            }
-        });
+        txtLoggedInUser.setText(vm.getCurrentUserName());
         listAdapter = new ListAdapter(this);
         rcvQuizzes = findViewById(R.id.rcvQuizzes);
         rcvQuizzes.setLayoutManager(new LinearLayoutManager(this));

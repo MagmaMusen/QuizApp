@@ -3,7 +3,7 @@
     <string name="edtUsername">Username</string>
     <string name="edtPassword">Password</string>
     <string name="btnLogin">Login</string>
-    <string name="btnSignUp">Sign up</string>
+    <string name="btnSignUp">Login</string>
     <string name="txtCreateUser">Create user</string>
     <string name="txtUsernameCreate">Username:</string>
     <string name="txtPasswordRepeat">Repeat password </string>

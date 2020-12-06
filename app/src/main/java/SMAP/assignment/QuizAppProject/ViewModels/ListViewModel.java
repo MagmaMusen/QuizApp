@@ -19,50 +19,37 @@ import SMAP.assignment.QuizAppProject.Database.User;
 
 public class ListViewModel extends ViewModel {
 
-    MutableLiveData<List<Quiz>> quizzes;
     FirebaseAuth auth;
     Repository repository;
 
     public ListViewModel()
     {
-        quizzes = new MutableLiveData<>();
         repository = Repository.getInstance();
     }
     public String createQuiz()
     {
         return repository.createQuiz(new Quiz("Default", auth.getCurrentUser().getUid(), false));
     }
-    public Task<User> getCurrentUserName()
+    public String getCurrentUserName()
     {
-        return repository.getCurrentUser();
+        return repository.getCurrentUser().getDisplayName();
     }
     public void updateSubscriberList()
     {
-        repository.loadSubscribed().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot value) {
-                if(value != null && !value.isEmpty())
-                {
-                    List<Quiz> newData = new ArrayList<>();
-                    for(DocumentSnapshot doc : value.getDocuments())
-                    {
-                        Quiz quiz = doc.toObject(Quiz.class);
-                        if(quiz != null)
-                        {
-                            quiz.setEntityKey(doc.getId());
-                            newData.add(quiz);
-                        }
-                        quizzes.setValue(newData);
-                    }
-                }
-            }
-        });
+        if(repository.getCurrentUser().getSubscribedQuizzes() == null)
+        {
+            return;
+        }
+        repository.loadSubscribed();
     }
     public LiveData<List<Quiz>> getQuizzes(){
-        return quizzes;
+        return repository.getSubscribed();
     }
+    /*
     public String getQuizId(int index)
     {
         return quizzes.getValue().get(index).getEntityKey();
     }
+
+     */
 }

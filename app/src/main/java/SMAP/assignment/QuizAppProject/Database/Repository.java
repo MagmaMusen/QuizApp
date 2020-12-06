@@ -47,11 +47,15 @@ public class Repository{
     private static Repository repository;
     private User user;
 
-    private void setCurrentUser(User user)
+    public User getCurrentUser()
+    {
+        return user;
+    }
+    private void setUser(User user)
     {
         this.user = user;
     }
-    public Task<User> getCurrentUser()
+    public Task<User> setCurrentUser()
     {
         DocumentReference documentReference = db.collection("user").document(auth.getCurrentUser().getUid());
         return documentReference.get().continueWith(new Continuation<DocumentSnapshot, User>() {
@@ -67,17 +71,17 @@ public class Repository{
         }).addOnSuccessListener(new OnSuccessListener<User>() {
             @Override
             public void onSuccess(User user) {
-                setCurrentUser(user);
+                setUser(user);
             }
         });
     }
     private static final String TAG = "Repository";
-    public void createUser(final User user)
+    public Task<Void> createUser(final User user)
     {
-        db.collection("user").document(auth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+        return db.collection("user").document(auth.getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                setCurrentUser(user);
+                setUser(user);
             }
         });
     }
@@ -109,15 +113,71 @@ public class Repository{
         questionData.setValue(questions);
         return questionData;
     }
-    public Task<QuerySnapshot> loadSubscribed()
+    private MutableLiveData<List<Quiz>> subscribedQuizzes;
+    public LiveData<List<Quiz>> getSubscribed()
     {
-        return db.collection("quiz").whereIn(FieldPath.documentId(), user.getSubscribedQuizzes())
-                .get();
+        if(subscribedQuizzes == null)
+        {
+            subscribedQuizzes = new MutableLiveData<>();
+        }
+        return subscribedQuizzes;
     }
-    private MutableLiveData<List<Quiz>> quizzes;
-    public Task<QuerySnapshot> getAllQuizzes()
+    public void loadSubscribed()
     {
-        return db.collection("quiz").whereEqualTo("shared", true).get();
+        db.collection("quiz").whereIn(FieldPath.documentId(), user.getSubscribedQuizzes())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot value) {
+                        if(value != null && !value.isEmpty())
+                        {
+                            List<Quiz> newData = new ArrayList<>();
+                            for(DocumentSnapshot doc : value.getDocuments())
+                            {
+                                Quiz quiz = doc.toObject(Quiz.class);
+                                if(quiz != null)
+                                {
+                                    quiz.setEntityKey(doc.getId());
+                                    newData.add(quiz);
+                                }
+                                subscribedQuizzes.setValue(newData);
+                            }
+                        }
+                    }
+                });
+    }
+    private MutableLiveData<List<Quiz>> searchQuizzes;
+    public LiveData<List<Quiz>> getSearch()
+    {
+        if(searchQuizzes == null)
+        {
+            searchQuizzes = new MutableLiveData<>();
+        }
+        return searchQuizzes;
+    }
+    public void updateQuizList(final String quizName)
+    {
+        db.collection("quiz").whereEqualTo("shared", true)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot value) {
+                        if(value != null && !value.isEmpty())
+                        {
+                            List<Quiz> newData = new ArrayList<>();
+                            for(DocumentSnapshot doc : value.getDocuments())
+                            {
+                                Quiz quiz = doc.toObject(Quiz.class);
+                                if(quiz != null && quiz.getName().toLowerCase().contains(quizName))
+                                {
+                                    quiz.setEntityKey(doc.getId());
+                                    newData.add(quiz);
+                                }
+                                searchQuizzes.setValue(newData);
+                            }
+                        }
+                    }
+                });
     }
 
     public String createQuiz(final Quiz quiz)
