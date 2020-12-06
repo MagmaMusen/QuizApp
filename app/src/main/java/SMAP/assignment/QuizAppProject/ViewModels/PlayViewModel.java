@@ -13,7 +13,6 @@ import java.util.List;
 
 import SMAP.assignment.QuizAppProject.Data.Repository;
 import SMAP.assignment.QuizAppProject.Models.Question;
-import SMAP.assignment.QuizAppProject.Models.TextImageToTextQuestion;
 
 public class PlayViewModel  extends AndroidViewModel {
     Repository repo;
@@ -34,10 +33,13 @@ public class PlayViewModel  extends AndroidViewModel {
         {
             questions = new MutableLiveData<>();
             questions.setValue(new ArrayList<Question>());
-            for(int i = 0; i<20; i++)
+            for(int i = 0; i<3; i++)
             {
-                questions.getValue().add(new TextImageToTextQuestion());
+                questions.getValue().add(new Question());
             }
+            questions.getValue().get(1).setImage("https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Leonardo_DiCaprio_2014.jpg/265px-Leonardo_DiCaprio_2014.jpg");
+            questions.getValue().get(2).setImage("https://upload.wikimedia.org/wikipedia/commons/c/c4/Streep_san_sebastian_2008_2.jpg");
+
             Log.d(TAG, "Added dummy data!");
         }
         return questions;

@@ -34,7 +34,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
     public void updateQuestionList(List<Question> list){
         questionList = list;
-        Log.d("ey",questionList.get(0).getThumbnailImageUrl());
+        Log.d("ey",questionList.get(0).getImage());
         notifyDataSetChanged();
     }
 
@@ -51,8 +51,11 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     @Override
     public void onBindViewHolder(@NonNull QuestionViewHolder holder, int position) {
         Question q = questionList.get(position);
-        if(q.getThumbnailImageUrl() != null) {
-            Glide.with(holder.imgThumbnail.getContext()).load(q.getThumbnailImageUrl()).into(holder.imgThumbnail);
+        if(q.getImage() != null) {
+            Glide.with(holder.imgThumbnail.getContext()).load(q.getImage()).into(holder.imgThumbnail);
+        }
+        if(q.getQuestionText() != null) {
+            holder.txtThumbnail.setText(q.getQuestionText());
         }
     }
 
