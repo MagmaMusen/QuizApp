@@ -214,7 +214,5 @@ public class SingleQuizActivity extends AppCompatActivity {
         intent.putExtra(Constants.QUIZID, quizId);
         startActivity(intent);
     }
-
-
 }
 
