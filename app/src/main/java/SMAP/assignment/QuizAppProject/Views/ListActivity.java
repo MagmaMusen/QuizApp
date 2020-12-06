@@ -51,8 +51,6 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
             }
         });
 
-        Log.d(TAG, "onCreate: Run!");
-
         // Start service that recommends a random shared quiz periodically.
         Intent RecommendServiceIntent = new Intent(this, RecommendationService.class);
         startService(RecommendServiceIntent);

@@ -72,7 +72,6 @@ public class RecommendationService extends Service {
     }
 
     private void recommendRecursive(final int sleepTime){
-        Log.d(TAG, "onStartCommand: Run!");
         if(execService == null){
             execService = Executors.newSingleThreadExecutor();
         }
@@ -86,7 +85,6 @@ public class RecommendationService extends Service {
         // Pick random quiz to recommend.
         if(quizzes != null) {
             Quiz randomQuiz = quizzes.get(random.nextInt(quizzes.size()));
-            Log.d(TAG, "onStartCommand: Run inside quiz not null!");
 
             Notification recommendNotification = new NotificationCompat.Builder(this, SERVICE_CHANNEL_RECOMMENDATION)
                     .setContentTitle("New Quiz recommendation!")
