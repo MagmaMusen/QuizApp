@@ -14,17 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <service
             android:name=".Services.RecommendationService"
             android:enabled="true"
             android:exported="false"
             ></service>
 
-        <activity android:name=".Views.SingleQuizActivity"></activity>
-        <activity android:name=".Views.PlayActivity"></activity>
-        <activity android:name=".Views.EditQuestionActivity" />
-        <activity android:name=".Views.QuestionsActivity" />
-        <activity android:name=".Views.SignInActivity">
         <activity
             android:name=".Views.SingleQuizActivity"
             android:screenOrientation="portrait"></activity>
