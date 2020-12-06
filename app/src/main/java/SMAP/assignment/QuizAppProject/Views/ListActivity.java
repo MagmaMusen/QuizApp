@@ -90,6 +90,7 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.IList
 
     public void GoToCreate(){
         vm.createQuiz();
+        vm.clearQuestions();
         Intent i = new Intent(this, QuestionsActivity.class);
         startActivity(i);
     }

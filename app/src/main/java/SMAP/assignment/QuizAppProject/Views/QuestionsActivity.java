@@ -73,7 +73,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionAdap
         btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO make sure next activity knows it is new
+
                 Question question = new Question();
                 question.isNew = true;
                 vm.setCurrentQuestion(question);
