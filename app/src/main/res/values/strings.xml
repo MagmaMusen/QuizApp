@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">LEARN IT</string>
+    <string name="app_name" translatable="false">LEARN IT</string>
     <string name="edtUsername">Username</string>
-    <string name="edtPassword">Password</string>
+    <string name="edtPassword" translatable="false">Password</string>
     <string name="btnLogin">Login</string>
     <string name="btnSignUp">Login</string>
     <string name="txtCreateUser">Create user</string>

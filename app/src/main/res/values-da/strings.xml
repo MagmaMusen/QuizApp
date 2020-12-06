@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edtUsername">Brugernavn</string>
+    <string name="btnLogin">Log ind</string>
+    <string name="btnSignUp">Log ind</string>
+    <string name="txtCreateUser">Opret bruger</string>
+    <string name="txtUsernameCreate">Brugernavn:</string>
+    <string name="txtPasswordRepeat">Gentage password</string>
+    <string name="btnSearch">Søg</string>
+    <string name="btnCreateQuiz">Opret quiz</string>
+    <string name="txtQuizName">Quiz navn</string>
+    <string name="btnAdd">Tilføj</string>
+    <string name="btnSearchConfirm">Søg</string>
+    <string name="btnPlay">Spil</string>
+    <string name="btnShare">Del</string>
+    <string name="btnMakePrivate">Gør privat</string>
+    <string name="btnFollow">Følg</string>
+    <string name="btnUnfollow">Følg ikke</string>
+    <string name="txtTitleSingleQuizView">Quiz titel</string>
+    <string name="btnEditSingleQuiz">Rediger</string>
+    <string name="txtQuestionThumbnailMissing">Ikke noget spørgsmål thumbnail tekst</string>
+    <string name="txtEditImage">Rediger billede URL:</string>
+    <string name="txtEditQuestionTitle">Rediger spørgsmål</string>
+    <string name="hintEditImageURL">BIllede URL</string>
+    <string name="hintEditQuestionText">Spørgsmål tekst</string>
+    <string name="hintEditAnswerText">Svar tekst</string>
+    <string name="btnCancel">Fortryd</string>
+    <string name="btnSave">Gem</string>
+    <string name="btnDelete">Slet</string>
+    <string name="btnExitPlay">Afslut</string>
+    <string name="txtQuestionText">Dette spørgsmål har ingen tekst</string>
+    <string name="btnPlayAnswer">Svar</string>
+    <string name="hintPlayAnswer">Indtast svar</string>
+    <string name="btnPlaySkip">Spring ove</string>
+    <string name="btnPlayLess">Mindre</string>
+    <string name="btnPlayMore">Mere</string>
+    <string name="txtSingleQuizOwnerPrefix">Af</string>
+    <string name="btnBack">Tilbage</string>
+    <string name="btnNew">Ny</string>
+</resources>
